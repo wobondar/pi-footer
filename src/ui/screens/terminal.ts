@@ -12,9 +12,8 @@ import { wrap } from "../helpers.js";
 import type { ScreenContext } from "../screen-context.js";
 import type { ScreenRender } from "../screen-render.js";
 import {
-  applyTerminalWidthModeAction,
-  configWithTerminalColorLevel,
   nextTerminalColorLevel,
+  nextTerminalWidthMode,
   TERMINAL_MENU_ACTIONS,
   TERMINAL_MENU_HINT,
   terminalMenuAction,
@@ -38,7 +37,7 @@ export class TerminalScreen extends Controller {
   }
 
   renderScreen(width: number): string[] {
-    const fields = terminalMenuFields(this.ctx.state.config);
+    const fields = terminalMenuFields(this.ctx.state.store.settings);
     return [
       this.render.line(
         this.render.menuTitle(
@@ -63,20 +62,21 @@ export class TerminalScreen extends Controller {
 
   private adjust(delta: number): void {
     if (terminalMenuAction(this.selected) === "width-mode") {
-      this.ctx.state.config = applyTerminalWidthModeAction(this.ctx.state.config, delta);
+      this.ctx.state.store.settings.terminal.widthMode = nextTerminalWidthMode(
+        this.ctx.state.store.settings,
+        delta,
+      );
       this.ctx.emitChange();
       return;
     }
-    const next = nextTerminalColorLevel(this.ctx.state.config, delta);
-    if (
-      next !== this.ctx.state.config.terminal.colorLevel &&
-      hasCustomAnsiColors(this.ctx.state.config.lines)
-    ) {
+    const settings = this.ctx.state.store.settings;
+    const next = nextTerminalColorLevel(settings, delta);
+    if (next !== settings.terminal.colorLevel && hasCustomAnsiColors(this.ctx.state.store.lines)) {
       this.terminalState.pendingColorLevel = next;
       this.ctx.show("confirm-color-level");
       return;
     }
-    this.ctx.state.config = configWithTerminalColorLevel(this.ctx.state.config, next);
+    settings.terminal.colorLevel = next;
     this.ctx.emitChange();
   }
 }
@@ -111,11 +111,8 @@ export class ColorLevelConfirmScreen extends Controller {
     }
     if (action === "confirm") {
       if (this.terminalState.pendingColorLevel)
-        this.ctx.state.config = configWithTerminalColorLevel(
-          this.ctx.state.config,
-          this.terminalState.pendingColorLevel,
-        );
-      resetCustomAnsiColors(this.ctx.state.config.lines);
+        this.ctx.state.store.settings.terminal.colorLevel = this.terminalState.pendingColorLevel;
+      resetCustomAnsiColors(this.ctx.state.store.lines);
       this.terminalState.pendingColorLevel = undefined;
       this.ctx.show("terminal");
       this.ctx.emitChange();

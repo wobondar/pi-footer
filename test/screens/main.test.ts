@@ -9,7 +9,23 @@ describe("MainScreen", () => {
     const harness = createScreenHarness();
     const screen = new MainScreen(harness.ctx, harness.render);
 
-    expect(screen.renderScreen(100).join("\n")).toContain("Main Menu");
+    const rendered = screen.renderScreen(100).join("\n");
+    expect(rendered).toContain("Main Menu");
+    expect(rendered).toContain("↑/↓ select • enter option • ctrl+s save • esc exit");
+    expect(rendered).toContain("Edit lines");
+    expect(rendered).toContain("Manage status lines and line widgets");
+    expect(rendered).toContain("Edit colors");
+    expect(rendered).toContain("Configure per-widget foreground/background/bold");
+    expect(rendered).toContain("Terminal Options");
+    expect(rendered).toContain("Terminal width and color level");
+    expect(rendered).toContain("Global Overrides");
+    expect(rendered).toContain("Global presets, separators, icons, minimalist mode");
+    expect(rendered).toContain("Pi extensions");
+    expect(rendered).toContain("Published statuses and extension status row visibility");
+    expect(rendered).toContain("Save & Exit");
+    expect(rendered).toContain("Persist changes and close the configuration UI");
+    expect(rendered).toContain("Exit without saving");
+    expect(rendered).toContain("Discard unsaved changes and close immediately");
 
     screen.handleInput(key.up);
     screen.handleInput(key.down);

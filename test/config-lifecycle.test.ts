@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { registry } from "../src/widgets/registry.js";
 
-import { createWidget, DEFAULT_CONFIG } from "../src/config.js";
+import { DEFAULT_CONFIG } from "../src/config.js";
 import { ConfigLifecycle } from "../src/ui/config-lifecycle.js";
 
 describe("ConfigLifecycle", () => {
@@ -25,7 +26,7 @@ describe("ConfigLifecycle", () => {
 
   it("updates the saved config only when marked saved", () => {
     const lifecycle = new ConfigLifecycle(DEFAULT_CONFIG);
-    const saved = { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] };
+    const saved = { ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] };
 
     lifecycle.markChanged();
     lifecycle.markSaved(saved);
@@ -52,7 +53,7 @@ describe("ConfigLifecycle", () => {
 
   it("does not expose mutable saved config references", () => {
     const lifecycle = new ConfigLifecycle(DEFAULT_CONFIG);
-    const saved = { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] };
+    const saved = { ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] };
 
     lifecycle.markSaved(saved);
     saved.lines = [];

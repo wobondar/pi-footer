@@ -3,7 +3,8 @@ import type { GetExtensionStatuses } from "../../src/extension-statuses.js";
 import type { StatuslineConfig } from "../../src/types.js";
 import type { ScreenContext } from "../../src/ui/screen-context.js";
 import { ScreenRender } from "../../src/ui/screen-render.js";
-import { createScreenState } from "../../src/ui/screen-state.js";
+import { createScreenState, type ScreenState } from "../../src/ui/screen-state.js";
+import { WidgetStore } from "../../src/widgets/store.js";
 import type { UiTheme } from "../../src/ui/theme.js";
 
 export const testTheme: UiTheme = {
@@ -19,6 +20,10 @@ export const testTheme: UiTheme = {
   previewTitle: (text) => text,
   configStateLabel: (_status, label) => label,
 };
+
+export function createTestScreenState(config: StatuslineConfig = DEFAULT_CONFIG): ScreenState {
+  return createScreenState(WidgetStore.fromConfig(cloneConfig(config)));
+}
 
 export interface ScreenHarness {
   ctx: ScreenContext;
@@ -38,12 +43,12 @@ export function createScreenHarness(
 ): ScreenHarness {
   const shown: string[] = [];
   const saves: boolean[] = [];
-  const state = createScreenState(cloneConfig(options.config ?? DEFAULT_CONFIG));
+  const state = createTestScreenState(options.config ?? DEFAULT_CONFIG);
   const ctx: ScreenContext = {
     state,
     theme: testTheme,
     getExtensionStatuses: options.getExtensionStatuses ?? (() => new Map()),
-    currentLine: () => state.config.lines[state.selectedLine] ?? state.config.lines[0] ?? [],
+    currentLine: () => state.store.lines[state.selectedLine] ?? state.store.lines[0] ?? [],
     currentWidget: () => ctx.currentLine()[state.selectedWidget],
     visibleRowCount: () => options.visibleRows ?? 5,
     show(view) {

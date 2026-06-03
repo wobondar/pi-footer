@@ -2,7 +2,7 @@ import { visibleWidth } from "@earendil-works/pi-tui";
 import { describe, expect, it } from "vitest";
 
 import { ScreenRender } from "../src/ui/screen-render.js";
-import { stripAnsi } from "./helpers/ansi.js";
+import { stripAnsi } from "../src/colors.js";
 
 const screenRender = new ScreenRender({
   accent: (text: string) => `<a>${text}</a>`,

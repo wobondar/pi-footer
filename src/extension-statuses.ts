@@ -1,4 +1,4 @@
-import { isRecord } from "./utils.js";
+import { isRecord } from "./types.js";
 
 export const EMPTY_STATUS_LABEL = "[Empty status]";
 
@@ -7,7 +7,7 @@ export interface ExtensionStatusRowConfig {
   knownKeys: string[];
 }
 
-export interface ExtensionStatusEntry {
+interface ExtensionStatusEntry {
   key: string;
   value: string;
   published: boolean;

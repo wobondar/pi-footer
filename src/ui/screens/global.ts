@@ -1,9 +1,11 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
+import { WidgetStore } from "../../widgets/store.js";
 import {
   applyGlobalMenuAction,
-  applyGlobalMenuBackspace,
-  applyGlobalMenuTextInput,
+  applyGlobalSettingsAction,
+  applyGlobalSettingsBackspace,
+  applyGlobalSettingsTextInput,
   GLOBAL_MENU_ACTIONS,
   GLOBAL_MENU_HINT,
   globalMenuAction,
@@ -16,7 +18,7 @@ export class GlobalScreen extends Controller {
   private selected = 0;
 
   renderScreen(width: number): string[] {
-    const fields = globalMenuFields(this.ctx.state.config);
+    const fields = globalMenuFields(this.ctx.state.store.settings);
     return [
       this.render.line(
         this.render.menuTitle("Global Overrides", "Configure global settings for the pi-footer"),
@@ -39,29 +41,35 @@ export class GlobalScreen extends Controller {
   }
 
   private adjust(delta: number): void {
-    this.ctx.state.config = applyGlobalMenuAction(
-      this.ctx.state.config,
-      globalMenuAction(this.selected),
-      delta,
-    );
+    const action = globalMenuAction(this.selected);
+    const settings = this.ctx.state.store.settings;
+
+    if (!applyGlobalSettingsAction(settings, action, delta)) {
+      this.ctx.state.store = WidgetStore.fromConfig(
+        applyGlobalMenuAction(this.ctx.state.store.toConfig(), action, delta),
+      );
+    }
+
     this.ctx.emitChange();
   }
 
   private applyTextInput(data: string): void {
-    const next = applyGlobalMenuTextInput(
-      this.ctx.state.config,
-      globalMenuAction(this.selected),
-      data,
-    );
-    if (!next) return;
-    this.ctx.state.config = next;
+    if (
+      !applyGlobalSettingsTextInput(
+        this.ctx.state.store.settings,
+        globalMenuAction(this.selected),
+        data,
+      )
+    )
+      return;
     this.ctx.emitChange();
   }
 
   private applyBackspace(): void {
-    const next = applyGlobalMenuBackspace(this.ctx.state.config, globalMenuAction(this.selected));
-    if (!next) return;
-    this.ctx.state.config = next;
+    if (
+      !applyGlobalSettingsBackspace(this.ctx.state.store.settings, globalMenuAction(this.selected))
+    )
+      return;
     this.ctx.emitChange();
   }
 }

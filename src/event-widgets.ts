@@ -1,8 +1,8 @@
-import { isRecord } from "./utils.js";
+import { isRecord } from "./types.js";
 
 export const UPDATE_EVENT_WIDGET_EVENT = "pi-footer:update-widget";
 
-export interface UpdateEventWidgetPayload {
+interface UpdateEventWidgetPayload {
   widgetId: string;
   value: string | null;
 }
@@ -11,10 +11,6 @@ const EVENT_WIDGET_ID_PREFIX = "event_";
 
 export function createEventWidgetId(): string {
   return `${EVENT_WIDGET_ID_PREFIX}${Math.random().toString(36).slice(2, 10)}`;
-}
-
-export function eventWidgetUsage(widgetId: string): string {
-  return `pi.events.emit("${UPDATE_EVENT_WIDGET_EVENT}", { "widgetId": "${widgetId}", "value": "" })`;
 }
 
 export class EventWidgetValues {

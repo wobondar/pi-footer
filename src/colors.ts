@@ -1,8 +1,14 @@
 import type { Theme, ThemeColor } from "@earendil-works/pi-coding-agent";
-import chalk from "chalk";
+import { Chalk } from "chalk";
 
-export type ColorLevel = "truecolor" | "ansi256" | "ansi16" | "none";
-export type TerminalWidthMode = "full" | "full-minus-40";
+const chalk = {
+  level: 2,
+  c: new Chalk({ level: 2 }),
+};
+
+export const COLOR_LEVEL_VALUES = ["truecolor", "ansi256", "ansi16", "none"] as const;
+
+export type ColorLevel = (typeof COLOR_LEVEL_VALUES)[number];
 export type ColorName =
   | "default"
   | "black"
@@ -24,7 +30,7 @@ export type ColorName =
   | `ansi256:${number}`
   | `pi:${ThemeColor}`;
 
-export interface ColorChoice {
+interface ColorChoice {
   label: string;
   value: ColorName;
 }
@@ -69,6 +75,7 @@ const PI_THEME_COLORS: ThemeColor[] = [
   "toolDiffAdded",
   "toolDiffRemoved",
   "toolDiffContext",
+  "syntaxType",
   "thinkingOff",
   "thinkingMinimal",
   "thinkingLow",
@@ -78,7 +85,7 @@ const PI_THEME_COLORS: ThemeColor[] = [
   "bashMode",
 ];
 
-export const PI_FOREGROUND_COLORS: ColorChoice[] = PI_THEME_COLORS.map((color) => ({
+const PI_FOREGROUND_COLORS: ColorChoice[] = PI_THEME_COLORS.map((color) => ({
   label: `Pi ${themeColorDisplayName(color)}`,
   value: `pi:${color}`,
 }));
@@ -144,6 +151,13 @@ export function deleteAnsi256Digit(color: ColorName | undefined): ColorName {
   return `ansi256:${next === "" ? 0 : Number(next)}`;
 }
 
+function useColorLevel(level: ColorLevel) {
+  const next = level === "truecolor" ? 3 : level === "ansi256" ? 2 : 1;
+  if (chalk.level === next) return;
+  chalk.level = next;
+  chalk.c = new Chalk({ level: next });
+}
+
 export function applyColors(
   text: string,
   foreground: ColorName | undefined,
@@ -153,26 +167,29 @@ export function applyColors(
   theme?: Theme,
 ): string {
   if (level === "none") return text;
-  chalk.level = level === "truecolor" ? 3 : level === "ansi256" ? 2 : 1;
+  useColorLevel(level);
 
   let output = text;
   if (foreground && foreground !== "default")
     output = applyOne(output, foreground, false, level, theme);
   if (background && background !== "default") output = applyOne(output, background, true, level);
-  if (bold) output = chalk.bold(output);
+  if (bold) output = chalk.c.bold(output);
   return output;
 }
 
-export function resetAnsi256Colors<
-  T extends {
-    fg?: ColorName;
-    bg?: ColorName;
-    warningFg?: ColorName;
-    warningBg?: ColorName;
-    dangerFg?: ColorName;
-    dangerBg?: ColorName;
-  },
->(options: T): T {
+// The styleable color bag shared by widget options and the context conditional-color helper.
+// fg/bg are validated ColorName (color picker); the warning/danger quartet is raw text input
+// (kind: "text" properties) normalized via normalizeColor() at read time.
+export interface ConditionalColorFields {
+  fg?: ColorName;
+  bg?: ColorName;
+  warningFg?: string;
+  warningBg?: string;
+  dangerFg?: string;
+  dangerBg?: string;
+}
+
+export function resetAnsi256Colors<T extends ConditionalColorFields>(options: T): T {
   const next = { ...options };
   if (next.fg?.startsWith("ansi256:")) next.fg = "default";
   if (next.bg?.startsWith("ansi256:")) next.bg = "default";
@@ -201,7 +218,7 @@ function applyOne(
   if (color.startsWith("ansi256:")) {
     const code = Number(color.slice("ansi256:".length));
     if (level === "ansi256" || level === "truecolor") {
-      return background ? chalk.bgAnsi256(code)(text) : chalk.ansi256(code)(text);
+      return background ? chalk.c.bgAnsi256(code)(text) : chalk.c.ansi256(code)(text);
     }
     return text;
   }
@@ -209,4 +226,12 @@ function applyOne(
   const codes = ANSI16_FG[color as Exclude<ColorName, `ansi256:${number}` | `pi:${ThemeColor}`>];
   if (!codes || color === "default") return text;
   return `\x1b[${background ? codes[1] : codes[0]}m${text}\x1b[${background ? 49 : 39}m`;
+}
+
+// Keep the escape byte out of a regex literal so oxlint's no-control-regex rule does not
+// flag the intentional ANSI matcher. RegExp still receives the ESC sequence at runtime.
+const ANSI_ESCAPE_PATTERN = new RegExp(String.raw`\x1B\[[0-?]*[ -/]*[@-~]`, "g");
+
+export function stripAnsi(text: string): string {
+  return text.replace(ANSI_ESCAPE_PATTERN, "");
 }

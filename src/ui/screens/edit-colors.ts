@@ -1,6 +1,6 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import type { WidgetInstance } from "../../types.js";
+import type { Widget } from "../../widgets/types.js";
 import {
   applyColorDigit,
   applyColorOptionField,
@@ -51,17 +51,17 @@ export class EditColorsScreen extends Controller {
     this.selected = Math.min(Math.max(this.selected, 0), Math.max(0, fieldCount - 1));
   }
 
-  private applyColorDigit(widget: WidgetInstance, field: ColorOptionField, digit: string): void {
+  private applyColorDigit(widget: Widget, field: ColorOptionField, digit: string): void {
     if (!applyColorDigit(widget, field, digit)) return;
     this.ctx.emitChange();
   }
 
-  private deleteColorDigit(widget: WidgetInstance, field: ColorOptionField): void {
+  private deleteColorDigit(widget: Widget, field: ColorOptionField): void {
     if (!deleteColorDigit(widget, field)) return;
     this.ctx.emitChange();
   }
 
-  private adjustColorField(widget: WidgetInstance, field: ColorOptionField, delta: number): void {
+  private adjustColorField(widget: Widget, field: ColorOptionField, delta: number): void {
     applyColorOptionField(widget, field, delta);
     this.ctx.emitChange();
   }

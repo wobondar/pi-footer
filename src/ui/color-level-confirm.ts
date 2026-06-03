@@ -1,7 +1,7 @@
 import type { ColorLevel } from "../colors.js";
 import { COLOR_LEVEL_LABELS } from "./model.js";
 
-export type ColorLevelConfirmAction = "confirm" | "cancel" | undefined;
+type ColorLevelConfirmAction = "confirm" | "cancel";
 
 export const COLOR_LEVEL_CONFIRM_HINT = "Press enter/y to proceed, esc/n to go back.";
 export const COLOR_LEVEL_CONFIRM_WARNING =
@@ -15,7 +15,7 @@ export function colorLevelConfirmAction(
   data: string,
   isEscape: boolean,
   isEnter: boolean,
-): ColorLevelConfirmAction {
+): ColorLevelConfirmAction | undefined {
   if (isEscape || data === "n") return "cancel";
   if (isEnter || data === "y") return "confirm";
   return undefined;

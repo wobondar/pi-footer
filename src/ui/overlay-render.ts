@@ -2,20 +2,22 @@ import type { Theme } from "@earendil-works/pi-coding-agent";
 
 import type { GetExtensionStatuses } from "../extension-statuses.js";
 import { renderStatuslines } from "../render.js";
-import type { StatuslineConfig, StatuslineData } from "../types.js";
+import type { StatuslineData } from "../types.js";
+import type { WidgetStore } from "../widgets/store.js";
 import type { ScreenRender } from "./screen-render.js";
 import type { UiTheme } from "./theme.js";
 import { configTitleBarParts, previewTitleParts } from "./title-bar.js";
 
-export interface OverlayRenderOptions {
+interface OverlayRenderOptions {
   width: number;
   terminalRows: number;
   activeLineCount: number;
   visibleRowCount: number;
-  config: StatuslineConfig;
+  store: WidgetStore;
   previewData: StatuslineData;
   getExtensionStatuses: GetExtensionStatuses;
   theme: Theme;
+  requestRender?: () => void;
   configStateText: string;
   body: string[];
 }
@@ -60,11 +62,10 @@ export class OverlayRender {
   }
 
   private previewLines(options: OverlayRenderOptions): string[] {
-    // NOTE: uncoment below for demo-look preview.
-    // return renderStatuslines(options.config, options.previewData, Math.max(20, options.width - 2), {
-    return renderStatuslines(options.config, options.previewData, Math.max(20, options.width), {
+    return renderStatuslines(options.store, options.previewData, Math.max(20, options.width), {
       getExtensionStatuses: options.getExtensionStatuses,
       theme: options.theme,
+      ...(options.requestRender ? { requestRender: options.requestRender } : {}),
     }).map((line) => this.screenRender.lineW(line, options.width));
   }
 

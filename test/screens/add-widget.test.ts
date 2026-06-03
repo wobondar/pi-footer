@@ -12,6 +12,10 @@ describe("AddWidgetScreen", () => {
     });
     const screen = new AddWidgetScreen(harness.ctx, harness.render);
 
+    for (const char of "runtime") screen.handleInput(char);
+    expect(screen.renderScreen(100).join("\n")).toContain("Project / Runtime");
+    for (let index = 0; index < "runtime".length; index += 1) screen.handleInput(key.backspace);
+
     screen.handleInput(key.down);
     screen.handleInput(key.up);
     screen.handleInput("\x1b[6~");

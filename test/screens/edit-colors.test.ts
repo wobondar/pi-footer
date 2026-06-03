@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { registry } from "../../src/widgets/registry.js";
 
-import { createWidget, DEFAULT_CONFIG } from "../../src/config.js";
+import { DEFAULT_CONFIG } from "../../src/config.js";
 import { EditColorsScreen } from "../../src/ui/screens/edit-colors.js";
 import { key } from "../helpers/keys.js";
 import { createScreenHarness } from "../helpers/screen.js";
@@ -17,11 +18,13 @@ describe("EditColorsScreen", () => {
 
   it("renders and edits color fields", () => {
     const harness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] },
+      config: { ...DEFAULT_CONFIG, lines: [[registry.createEntry("runtime")]] },
     });
     const screen = new EditColorsScreen(harness.ctx, harness.render);
 
-    expect(screen.renderScreen(100).join("\n")).toContain("Foreground");
+    const rendered = screen.renderScreen(100).join("\n");
+    expect(rendered).toContain("Colors / Runtime");
+    expect(rendered).toContain("Foreground");
 
     screen.handleInput(key.right);
     screen.handleInput(key.left);
@@ -39,7 +42,10 @@ describe("EditColorsScreen", () => {
       config: {
         ...DEFAULT_CONFIG,
         lines: [
-          [createWidget("context", { contextConditionalColors: true }), createWidget("model")],
+          [
+            registry.createEntry("context", { contextConditionalColors: true }),
+            registry.createEntry("model"),
+          ],
         ],
       },
     });
@@ -59,12 +65,12 @@ describe("EditColorsScreen", () => {
 
   it("renders context warning and danger color fields only when conditional colors are enabled", () => {
     const disabledHarness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("context")]] },
+      config: { ...DEFAULT_CONFIG, lines: [[registry.createEntry("context")]] },
     });
     const enabledHarness = createScreenHarness({
       config: {
         ...DEFAULT_CONFIG,
-        lines: [[createWidget("context", { contextConditionalColors: true })]],
+        lines: [[registry.createEntry("context", { contextConditionalColors: true })]],
       },
     });
     const disabledScreen = new EditColorsScreen(disabledHarness.ctx, disabledHarness.render);
@@ -79,7 +85,7 @@ describe("EditColorsScreen", () => {
 
   it("edits ANSI fields with digits and backspace", () => {
     const harness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] },
+      config: { ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] },
     });
     const screen = new EditColorsScreen(harness.ctx, harness.render);
 

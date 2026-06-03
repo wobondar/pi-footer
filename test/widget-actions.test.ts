@@ -1,13 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { createWidget } from "../src/config.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.js";
 import {
   addLineAfter,
   cloneLineAfter,
   cloneSelectedWidget,
   deleteLine,
   deleteSelectedWidget,
-  isLayoutWidget,
   moveLine,
   moveWidget,
   toggleWidgetEnabled,
@@ -16,7 +15,7 @@ import {
 
 describe("widget actions", () => {
   it("adds, clones, and deletes lines", () => {
-    const lines = [[createWidget("model")], [createWidget("cost")]];
+    const lines = [[createHydratedWidgetForTest("model")], [createHydratedWidgetForTest("cost")]];
 
     expect(addLineAfter(lines, 0)).toBe(1);
     expect(lines[1]).toEqual([]);
@@ -30,14 +29,14 @@ describe("widget actions", () => {
   });
 
   it("does not delete the last remaining line", () => {
-    const lines = [[createWidget("model")]];
+    const lines = [[createHydratedWidgetForTest("model")]];
 
     expect(deleteLine(lines, 0)).toBe(0);
     expect(lines).toHaveLength(1);
   });
 
   it("moves lines within bounds", () => {
-    const lines = [[createWidget("model")], [createWidget("cost")]];
+    const lines = [[createHydratedWidgetForTest("model")], [createHydratedWidgetForTest("cost")]];
 
     expect(moveLine(lines, 0, 1)).toBe(1);
     expect(lines[0]?.[0]?.type).toBe("cost");
@@ -46,7 +45,7 @@ describe("widget actions", () => {
   });
 
   it("moves widgets within a line", () => {
-    const line = [createWidget("model"), createWidget("cost")];
+    const line = [createHydratedWidgetForTest("model"), createHydratedWidgetForTest("cost")];
 
     expect(moveWidget(line, 0, 1)).toBe(1);
     expect(line.map((widget) => widget.type)).toEqual(["cost", "model"]);
@@ -55,7 +54,7 @@ describe("widget actions", () => {
   });
 
   it("clones selected widgets", () => {
-    const line = [createWidget("model")];
+    const line = [createHydratedWidgetForTest("model")];
 
     expect(cloneSelectedWidget(line, 0)).toBe(1);
     expect(line.map((widget) => widget.type)).toEqual(["model", "model"]);
@@ -64,7 +63,7 @@ describe("widget actions", () => {
   });
 
   it("deletes selected widgets and clamps selection", () => {
-    const line = [createWidget("model"), createWidget("cost")];
+    const line = [createHydratedWidgetForTest("model"), createHydratedWidgetForTest("cost")];
 
     expect(deleteSelectedWidget([], 1)).toBe(1);
     expect(deleteSelectedWidget(line, 1)).toBe(0);
@@ -72,7 +71,7 @@ describe("widget actions", () => {
   });
 
   it("toggles enabled state", () => {
-    const widget = createWidget("model");
+    const widget = createHydratedWidgetForTest("model");
 
     expect(toggleWidgetEnabled(widget)).toBe(true);
     expect(widget.enabled).toBe(false);
@@ -80,13 +79,26 @@ describe("widget actions", () => {
   });
 
   it("toggles raw only for non-layout widgets", () => {
-    const model = createWidget("model");
-    const separator = createWidget("separator");
+    const model = createHydratedWidgetForTest("model");
+    const separator = createHydratedWidgetForTest("separator");
 
     expect(toggleWidgetRaw(model)).toBe(true);
     expect(model.options.raw).toBe(true);
     expect(toggleWidgetRaw(separator)).toBe(false);
     expect(toggleWidgetRaw(undefined)).toBe(false);
-    expect(isLayoutWidget(separator)).toBe(true);
+  });
+
+  it("operates on hydrated widgets", () => {
+    const line = [createHydratedWidgetForTest("model")];
+
+    expect(cloneSelectedWidget(line, 0)).toBe(1);
+    expect(line[1]?.type).toBe("model");
+    expect(line[1]).toHaveProperty("toEntry");
+    expect(line[0]?.id).not.toBe(line[1]?.id);
+
+    expect(toggleWidgetEnabled(line[0])).toBe(true);
+    expect(line[0]?.enabled).toBe(false);
+    expect(toggleWidgetRaw(line[0])).toBe(true);
+    expect(line[0]?.options.raw).toBe(true);
   });
 });

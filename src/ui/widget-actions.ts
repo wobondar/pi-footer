@@ -1,24 +1,28 @@
-import { cloneWidget } from "../config.js";
-import type { WidgetInstance } from "../types.js";
+import { registry, type WidgetType } from "../widgets/registry.js";
+import type { Widget } from "../widgets/types.js";
 
-export function addLineAfter(lines: WidgetInstance[][], selectedLine: number): number {
+export function addLineAfter(lines: Widget[][], selectedLine: number): number {
   lines.splice(selectedLine + 1, 0, []);
   return selectedLine + 1;
 }
 
-export function cloneLineAfter(lines: WidgetInstance[][], selectedLine: number): number {
+export function cloneLineAfter(
+  lines: Widget[][],
+  selectedLine: number,
+  cloneWidget: (widget: Widget) => Widget = (widget) => registry.cloneWidget(widget),
+): number {
   const line = lines[selectedLine] ?? [];
   lines.splice(selectedLine + 1, 0, line.map(cloneWidget));
   return selectedLine + 1;
 }
 
-export function deleteLine(lines: WidgetInstance[][], selectedLine: number): number {
+export function deleteLine(lines: Widget[][], selectedLine: number): number {
   if (lines.length <= 1) return selectedLine;
   lines.splice(selectedLine, 1);
   return Math.min(selectedLine, lines.length - 1);
 }
 
-export function moveLine(lines: WidgetInstance[][], selectedLine: number, delta: number): number {
+export function moveLine(lines: Widget[][], selectedLine: number, delta: number): number {
   const next = selectedLine + delta;
   if (next < 0 || next >= lines.length) return selectedLine;
   const [line] = lines.splice(selectedLine, 1);
@@ -27,7 +31,7 @@ export function moveLine(lines: WidgetInstance[][], selectedLine: number, delta:
   return next;
 }
 
-export function moveWidget(line: WidgetInstance[], selectedWidget: number, delta: number): number {
+export function moveWidget(line: Widget[], selectedWidget: number, delta: number): number {
   const next = selectedWidget + delta;
   if (next < 0 || next >= line.length) return selectedWidget;
   const [widget] = line.splice(selectedWidget, 1);
@@ -36,36 +40,37 @@ export function moveWidget(line: WidgetInstance[], selectedWidget: number, delta
   return next;
 }
 
-export function cloneSelectedWidget(line: WidgetInstance[], selectedWidget: number): number {
+export function cloneSelectedWidget(
+  line: Widget[],
+  selectedWidget: number,
+  cloneWidget: (widget: Widget) => Widget = (widget) => registry.cloneWidget(widget),
+): number {
   const widget = line[selectedWidget];
   if (!widget) return selectedWidget;
   line.splice(selectedWidget + 1, 0, cloneWidget(widget));
   return selectedWidget + 1;
 }
 
-export function deleteSelectedWidget(line: WidgetInstance[], selectedWidget: number): number {
+export function deleteSelectedWidget(line: Widget[], selectedWidget: number): number {
   if (line.length === 0) return selectedWidget;
   line.splice(selectedWidget, 1);
   return Math.max(0, Math.min(selectedWidget, line.length - 1));
 }
 
-export function toggleWidgetEnabled(widget: WidgetInstance | undefined): boolean {
+export function toggleWidgetEnabled(widget: Widget | undefined): boolean {
   if (!widget) return false;
-  widget.enabled = !widget.enabled;
+  widget.toggle();
   return true;
 }
 
-export function isLayoutWidget(widget: WidgetInstance): boolean {
+export function toggleWidgetRaw(widget: Widget | undefined): boolean {
+  if (!widget || isLayoutWidgetType(widget.type)) return false;
+  widget.update({ raw: !(widget.options.raw ?? false) });
+  return true;
+}
+
+function isLayoutWidgetType(type: WidgetType): boolean {
   return (
-    widget.type === "custom-text" ||
-    widget.type === "separator" ||
-    widget.type === "spacer" ||
-    widget.type === "flex-separator"
+    type === "custom-text" || type === "separator" || type === "spacer" || type === "flex-separator"
   );
-}
-
-export function toggleWidgetRaw(widget: WidgetInstance | undefined): boolean {
-  if (!widget || isLayoutWidget(widget)) return false;
-  widget.options.raw = !(widget.options.raw ?? false);
-  return true;
 }

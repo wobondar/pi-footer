@@ -1,6 +1,8 @@
-import { isRecord } from "./utils.js";
-import type { SessionMetrics } from "./types.js";
+import { isRecord, type SessionMetrics } from "./types.js";
 
+// Intentionally loose structural projection of the `usage` field on a pi session message entry.
+// Fields stay `unknown` and are validated at runtime (see isRecord usage below) rather than being
+// derived from pi's SDK types — keeps the defensive parsing robust to upstream shape changes.
 interface UsageLike {
   input?: unknown;
   output?: unknown;
@@ -12,6 +14,8 @@ interface UsageLike {
   };
 }
 
+// Intentionally loose structural projection of a pi session message entry (from
+// sessionManager.getBranch()). Same rationale as UsageLike: `unknown` fields, runtime-validated.
 interface MessageLike {
   role?: unknown;
   timestamp?: unknown;

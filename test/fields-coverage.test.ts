@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createWidget } from "../src/config.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.js";
 import {
   colorFieldValue,
   colorFields,
@@ -8,14 +8,14 @@ import {
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-  getBooleanField,
-  getDefinition,
-  getNumberField,
   getTextField,
+  isMetadataPropertyVisible,
 } from "../src/ui/fields.js";
-import type { ColorOptionField, EditField, OptionField } from "../src/ui/model.js";
+import type { ColorOptionField, OptionField } from "../src/ui/model.js";
+import { registry } from "../src/widgets/registry.js";
+import type { WidgetProperty } from "../src/widgets/types.js";
 
-const optionField = (id: EditField, kind: OptionField["kind"] = "text"): OptionField => ({
+const optionField = (id: string, kind: OptionField["kind"] = "text"): OptionField => ({
   id,
   label: id,
   kind,
@@ -28,51 +28,43 @@ const colorField = (id: ColorOptionField["id"]): ColorOptionField => ({
 
 describe("field helpers coverage", () => {
   it("builds fields for special widget families", () => {
-    expect(fieldsForWidget(createWidget("custom-text")).map((field) => field.id)).toEqual([
-      "enabled",
-      "text",
-    ]);
-    expect(fieldsForWidget(createWidget("event")).map((field) => field.id)).toContain("widgetId");
-    expect(fieldsForWidget(createWidget("external-status")).map((field) => field.id)).toEqual([
-      "enabled",
-      "externalStatusKey",
-      "trimValue",
-      "preserveTrimStyles",
-      "raw",
-      "hideWhenEmpty",
-      "icon",
-    ]);
-    expect(fieldsForWidget(createWidget("spacer")).map((field) => field.id)).toEqual([
-      "enabled",
-      "width",
-    ]);
-    expect(fieldsForWidget(createWidget("cache-read")).map((field) => field.id)).toContain(
-      "hideWhenZero",
-    );
     expect(
-      fieldsForWidget(createWidget("git-branch", { gitBranchDisplayStyle: "custom" })).map(
-        (field) => field.id,
-      ),
-    ).toEqual([
-      "enabled",
-      "raw",
-      "hideWhenEmpty",
-      "icon",
-      "text",
-      "gitBranchDisplayStyle",
-      "surroundLeft",
-      "surroundRight",
-    ]);
-    expect(fieldsForWidget(createWidget("git-diff")).map((field) => field.id)).toContain(
-      "gitDiffMode",
-    );
-    expect(fieldsForWidget(createWidget("model")).map((field) => field.id)).toContain(
-      "showProvider",
+      fieldsForWidget(createHydratedWidgetForTest("custom-text")).map((field) => field.id),
+    ).toEqual(["enabled", "text"]);
+    expect(fieldsForWidget(createHydratedWidgetForTest("spacer")).map((field) => field.id)).toEqual(
+      ["enabled", "width"],
     );
   });
 
+  it("honors metadata showWhen conditions", () => {
+    const conditionalProperty = {
+      id: "detail",
+      label: "Detail",
+      kind: "text",
+      description: "Only visible in detailed mode",
+      default: "",
+      showWhen: { property: "mode", equals: "detailed" },
+    } satisfies WidgetProperty;
+
+    expect(isMetadataPropertyVisible(conditionalProperty, { mode: "detailed" })).toBe(true);
+    expect(isMetadataPropertyVisible(conditionalProperty, { mode: "compact" })).toBe(false);
+    expect(isMetadataPropertyVisible(conditionalProperty, {})).toBe(false);
+    expect(
+      isMetadataPropertyVisible(
+        {
+          id: "always",
+          label: "Always",
+          kind: "boolean",
+          description: "Always visible",
+          default: false,
+        },
+        { mode: "compact" },
+      ),
+    ).toBe(true);
+  });
+
   it("formats option, text, number, boolean, and color values", () => {
-    const widget = createWidget("context", {
+    const widget = createHydratedWidgetForTest("context-length", {
       raw: true,
       hideWhenZero: true,
       contextConditionalColors: true,
@@ -86,9 +78,16 @@ describe("field helpers coverage", () => {
       icon: "ctx=",
     });
 
+    const tokenFormatField = fieldsForWidget(widget).find(
+      (field) => field.id === "tokenFormatStyle",
+    );
+
     expect(fieldValue(widget, optionField("enabled", "boolean"))).toBe("on");
     expect(fieldValue(widget, optionField("contextWarningPercent", "number"))).toBe("75");
-    expect(fieldValue(widget, optionField("tokenFormatStyle", "choice"))).toBe("Compact");
+    expect(tokenFormatField?.id).toBe("tokenFormatStyle");
+    expect(fieldValue(widget, tokenFormatField ?? optionField("tokenFormatStyle", "choice"))).toBe(
+      "Compact",
+    );
     expect(colorFields(widget).map((field) => field.id)).toContain("dangerBgAnsi");
     expect(colorFieldValue(widget, colorField("bold"))).toBe("off");
     expect(colorFieldValue(widget, colorField("warningFg"))).toBe("ANSI256 220");
@@ -96,7 +95,7 @@ describe("field helpers coverage", () => {
     expect(colorFieldValue(widget, colorField("warningBgAnsi"))).toBe("230");
     expect(colorFieldValue(widget, colorField("dangerFg"))).toBe("Pi Error");
     expect(colorFieldValue(widget, colorField("dangerBgAnsi"))).toBe("0");
-    expect(colorFieldValue(widget, colorField("fg"))).toBe("Blue");
+    expect(colorFieldValue(widget, colorField("fg"))).toBe("Bright Black");
     expect(colorFieldValue(widget, colorField("bg"))).toBe("Default");
     expect(colorFieldValue(widget, colorField("fgAnsi"))).toBe("0");
     expect(colorFieldValue(widget, colorField("bgAnsi"))).toBe("0");
@@ -104,95 +103,44 @@ describe("field helpers coverage", () => {
     expect(colorFieldValue(widget, colorField("dangerBg"))).toBe("Red");
     expect(colorFieldValue(widget, { id: "bold", label: "x", kind: "ansi" })).toBe("off");
 
-    expect(getBooleanField(widget, "hideWhenZero")).toBe(true);
-    expect(getBooleanField(widget, "showProvider")).toBe(false);
-    expect(getBooleanField(widget, "showSubscription")).toBe(false);
-    expect(getBooleanField(widget, "contextConditionalColors")).toBe(true);
-    expect(getBooleanField(createWidget("external-status"), "preserveTrimStyles")).toBe(true);
-    expect(getBooleanField(widget, "width")).toBe(false);
-    expect(getNumberField(widget, "contextDangerPercent")).toBe(95);
-    expect(getNumberField(createWidget("spacer", { width: 4 }), "width")).toBe(4);
-    expect(getNumberField(createWidget("external-status", { trimValue: 2 }), "trimValue")).toBe(2);
-    expect(getNumberField(createWidget("model"), "width")).toBeUndefined();
-    expect(getTextField(widget, "icon")).toBe("ctx=");
-    expect(getTextField(createWidget("event", { widgetId: "fast" }), "widgetId")).toBe("fast");
+    expect(fieldValue(widget, optionField("hideWhenZero", "boolean"))).toBe("on");
+    expect(fieldValue(widget, optionField("showProvider", "boolean"))).toBe("off");
+    expect(fieldValue(widget, optionField("contextConditionalColors", "boolean"))).toBe("on");
+    expect(fieldValue(widget, optionField("width", "boolean"))).toBe("off");
+    expect(fieldValue(widget, optionField("contextDangerPercent", "number"))).toBe("95");
     expect(
-      getTextField(
-        createWidget("external-status", { externalStatusKey: "build" }),
-        "externalStatusKey",
+      fieldValue(
+        createHydratedWidgetForTest("spacer", { width: 4 }),
+        optionField("width", "number"),
       ),
-    ).toBe("build");
-    expect(getTextField(createWidget("git-branch", { surroundLeft: "[" }), "surroundLeft")).toBe(
-      "[",
-    );
-    expect(getTextField(createWidget("git-branch", { surroundRight: "]" }), "surroundRight")).toBe(
-      "]",
-    );
+    ).toBe("4");
+    expect(getTextField(widget, "icon")).toBe("ctx=");
     expect(getTextField(widget, "width")).toBe("");
   });
 
   it("summarizes widget options", () => {
-    const customGitBranchOptions = formatWidgetOptions(
-      createWidget("git-branch", {
-        raw: true,
-        hideWhenEmpty: true,
-        gitBranchDisplayStyle: "custom",
-        surroundLeft: "[",
-        surroundRight: "]",
-      }),
-    );
-    expect(customGitBranchOptions).toContain("display=custom");
-    expect(customGitBranchOptions).not.toContain("left='['");
-    expect(customGitBranchOptions).not.toContain("right=']'");
-    expect(
-      formatWidgetOptions(createWidget("git-branch", { gitBranchDisplayStyle: "round-brackets" })),
-    ).toContain("display=brackets");
-    expect(formatWidgetOptions(createWidget("tokens", { tokenFormatStyle: "compact" }))).toContain(
-      "format=Compact",
-    );
     expect(
       formatWidgetOptions(
-        createWidget("cost", { costFormatStyle: "compact", showSubscription: true }),
+        createHydratedWidgetForTest("context-length", { contextConditionalColors: true }),
       ),
-    ).toContain("show-sub");
-    expect(formatWidgetOptions(createWidget("context-bar", { contextBarMode: "short" }))).toContain(
-      "display=Short bar",
-    );
-    expect(
-      formatWidgetOptions(createWidget("context", { contextConditionalColors: true })),
     ).toContain("with-colors");
-    expect(formatWidgetOptions(createWidget("git-diff", { gitDiffMode: "compact" }))).toContain(
-      "display=Compact (+n,-n)",
+    expect(formatWidgetOptions(createHydratedWidgetForTest("spacer", { width: 3 }))).toContain(
+      "width=3",
     );
-    expect(formatWidgetOptions(createWidget("cwd", { segments: 3 }))).toContain("segments=3");
-    expect(formatWidgetOptions(createWidget("cwd", { cwdDisplayStyle: "full-home" }))).toContain(
-      "display=full-path",
-    );
-    expect(formatWidgetOptions(createWidget("cwd", { cwdDisplayStyle: "fish" }))).toContain(
-      "display=fish-style",
-    );
-    expect(formatWidgetOptions(createWidget("external-status", { trimValue: 2 }))).toContain(
-      "trim=2",
-    );
-    expect(formatWidgetOptions(createWidget("spacer", { width: 3 }))).toContain("width=3");
     expect(
       formatWidgetColorOptions(
-        createWidget("custom-text", { text: "hello", fg: "pi:success", bold: true }),
+        createHydratedWidgetForTest("custom-text", { text: "hello", fg: "pi:success", bold: true }),
       ),
     ).toContain("text='hello'");
     expect(
-      formatWidgetColorOptions(createWidget("separator", { separator: "custom", text: "/" })),
+      formatWidgetColorOptions(
+        createHydratedWidgetForTest("separator", { separator: "custom", text: "/" }),
+      ),
     ).toContain("text='/'");
-    expect(
-      formatWidgetColorOptions(createWidget("session-name", { hideWhenEmpty: false, text: "-" })),
-    ).toContain("text='-'");
-    expect(
-      formatWidgetColorOptions(createWidget("external-status", { externalStatusKey: "build" })),
-    ).toContain("status=build");
   });
 
-  it("falls back for unknown definitions", () => {
-    expect(getDefinition("model").label).toBe("Model");
-    expect(getDefinition("missing" as never).label).toBe("Model");
+  it("uses the registry for widget definitions", () => {
+    expect(registry.spec("model").label).toBe("Model");
+    expect(registry.maybeSpec("missing")).toBeUndefined();
   });
 });

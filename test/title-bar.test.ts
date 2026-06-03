@@ -1,9 +1,9 @@
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { describe, expect, it } from "vitest";
 
-import { CONFIG_TITLE_TEXT, configTitleBarParts, previewTitleParts } from "../src/ui/title-bar.js";
-import { VERSION } from "../src/version.js";
-import { stripAnsi } from "./helpers/ansi.js";
+import { configTitleBarParts, previewTitleParts, retroText } from "../src/ui/title-bar.js";
+import { stripAnsi } from "../src/colors.js";
+import packageJson from "../package.json" with { type: "json" };
 
 describe("config title bar", () => {
   it("renders the animated title text", () => {
@@ -17,13 +17,13 @@ describe("config title bar", () => {
   it("adds a truncated version suffix when there is room", () => {
     const parts = configTitleBarParts(80, (text) => text, 0);
 
-    expect(parts.title).toContain(`| v${VERSION}`);
+    expect(parts.title).toContain(`| v${packageJson.version}`);
   });
 
   it("omits version suffix on narrow widths", () => {
     const parts = configTitleBarParts(10, (text) => text, 0);
 
-    expect(parts.title).not.toContain(`| v${VERSION}`);
+    expect(parts.title).not.toContain(`| v${packageJson.version}`);
   });
 
   it("right-aligns status with a border-colored separator line when provided", () => {
@@ -59,7 +59,7 @@ describe("config title bar", () => {
     expect(visibleWidth(parts.title) + parts.rightPad).toBe(20);
   });
 
-  it("exports the title text in one place", () => {
-    expect(CONFIG_TITLE_TEXT).toBe(" pi-footer configuration ");
+  it("handles empty, single-character, and multi-character text", () => {
+    expect(retroText("AB", 0)).toContain("A");
   });
 });

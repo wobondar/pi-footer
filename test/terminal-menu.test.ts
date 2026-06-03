@@ -2,9 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { DEFAULT_CONFIG } from "../src/config.js";
 import {
-  applyTerminalWidthModeAction,
-  configWithTerminalColorLevel,
   nextTerminalColorLevel,
+  nextTerminalWidthMode,
   TERMINAL_MENU_ACTIONS,
   TERMINAL_MENU_HINT,
   terminalMenuAction,
@@ -34,14 +33,11 @@ describe("terminal menu", () => {
   });
 
   it("applies terminal width mode changes", () => {
-    expect(applyTerminalWidthModeAction(DEFAULT_CONFIG, 1).terminal.widthMode).toBe(
-      "full-minus-40",
-    );
+    expect(nextTerminalWidthMode(DEFAULT_CONFIG, 1)).toBe("full-minus-40");
   });
 
   it("calculates and applies terminal color level changes", () => {
     expect(nextTerminalColorLevel(DEFAULT_CONFIG, 1)).toBe("ansi16");
-    expect(configWithTerminalColorLevel(DEFAULT_CONFIG, "none").terminal.colorLevel).toBe("none");
   });
 
   it("documents terminal menu controls", () => {

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { registry } from "../../src/widgets/registry.js";
 
-import { createWidget, DEFAULT_CONFIG } from "../../src/config.js";
+import { DEFAULT_CONFIG } from "../../src/config.js";
 import { LineListScreen } from "../../src/ui/screens/line-list.js";
 import { key } from "../helpers/keys.js";
 import { createScreenHarness } from "../helpers/screen.js";
@@ -8,7 +9,10 @@ import { createScreenHarness } from "../helpers/screen.js";
 describe("LineListScreen", () => {
   it("renders lines and mutates shared line selection", () => {
     const harness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("model")], [createWidget("cost")]] },
+      config: {
+        ...DEFAULT_CONFIG,
+        lines: [[registry.createEntry("model")], [registry.createEntry("cost")]],
+      },
     });
     const screen = new LineListScreen(harness.ctx, harness.render, "Edit lines", "widget-list");
 
@@ -27,10 +31,10 @@ describe("LineListScreen", () => {
       config: {
         ...DEFAULT_CONFIG,
         lines: [
-          [createWidget("model")],
-          [createWidget("cost")],
-          [createWidget("context")],
-          [createWidget("cwd")],
+          [registry.createEntry("model")],
+          [registry.createEntry("cost")],
+          [registry.createEntry("context")],
+          [registry.createEntry("cwd")],
         ],
       },
     });
@@ -44,25 +48,25 @@ describe("LineListScreen", () => {
     expect(harness.ctx.state.selectedLine).toBe(3);
 
     screen.handleInput("c");
-    expect(harness.ctx.state.config.lines).toHaveLength(5);
+    expect(harness.ctx.state.store.lines).toHaveLength(5);
     screen.handleInput("w");
     expect(harness.ctx.state.selectedLine).toBe(3);
     screen.handleInput("s");
     expect(harness.ctx.state.selectedLine).toBe(4);
     screen.handleInput("d");
-    expect(harness.ctx.state.config.lines).toHaveLength(4);
+    expect(harness.ctx.state.store.lines).toHaveLength(4);
     expect(harness.changes).toBe(4);
   });
 
   it("adds lines", () => {
     const harness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] },
+      config: { ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] },
     });
     const screen = new LineListScreen(harness.ctx, harness.render, "Edit lines", "widget-list");
 
     screen.handleInput("a");
 
-    expect(harness.ctx.state.config.lines).toHaveLength(2);
+    expect(harness.ctx.state.store.lines).toHaveLength(2);
     expect(harness.changes).toBe(1);
   });
 });

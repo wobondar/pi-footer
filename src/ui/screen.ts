@@ -2,9 +2,10 @@ import { Key, matchesKey } from "@earendil-works/pi-tui";
 
 import { cloneConfig } from "../config.js";
 import type { GetExtensionStatuses } from "../extension-statuses.js";
-import type { StatuslineConfig, StatuslineData, WidgetInstance } from "../types.js";
+import type { StatuslineConfig, StatuslineData } from "../types.js";
+import { WidgetStore } from "../widgets/store.js";
+import type { Widget } from "../widgets/types.js";
 import { ConfigLifecycle, type ConfigUiResult } from "./config-lifecycle.js";
-import { RETRO_FRAME_INTERVAL_MS } from "./gradient.js";
 import { escapeTarget } from "./helpers.js";
 import { activeLineCount, visibleRowCount } from "./layout.js";
 import { CONFIG_UI_HEIGHT_RATIO, type ScreenView } from "./model.js";
@@ -24,6 +25,7 @@ import { MainScreen } from "./screens/main.js";
 import { ColorLevelConfirmScreen, TerminalScreen, TerminalState } from "./screens/terminal.js";
 import { WidgetListScreen } from "./screens/widget-list.js";
 import { createUiTheme, type ThemeProvider, type UiTheme } from "./theme.js";
+import { RETRO_FRAME_INTERVAL_MS } from "./title-bar.js";
 
 export class StatuslineConfigScreen {
   private readonly state: ScreenState;
@@ -49,7 +51,7 @@ export class StatuslineConfigScreen {
       getTheme: ThemeProvider;
     },
   ) {
-    this.state = createScreenState(cloneConfig(config));
+    this.state = createScreenState(WidgetStore.fromConfig(cloneConfig(config)));
     this.lifecycle = new ConfigLifecycle(config);
     this.theme = createUiTheme(props.getTheme);
     this.screenRender = new ScreenRender(this.theme);
@@ -66,10 +68,11 @@ export class StatuslineConfigScreen {
       terminalRows: this.getTerminalRows(),
       activeLineCount: this.getActiveLineCount(),
       visibleRowCount: this.getVisibleRowCount(),
-      config: this.state.config,
+      store: this.state.store,
       previewData: this.previewData,
       getExtensionStatuses: this.getExtensionStatuses,
       theme: this.props.getTheme(),
+      requestRender: this.requestRender,
       configStateText: this.lifecycle.label
         ? this.theme.configStateLabel(this.lifecycle.state, this.lifecycle.label)
         : "",
@@ -176,11 +179,11 @@ export class StatuslineConfigScreen {
     this.state.view = view;
   }
 
-  private currentLine(): WidgetInstance[] {
-    return this.state.config.lines[this.state.selectedLine] ?? this.state.config.lines[0] ?? [];
+  private currentLine(): Widget[] {
+    return this.state.store.lines[this.state.selectedLine] ?? this.state.store.lines[0] ?? [];
   }
 
-  private currentWidget(): WidgetInstance | undefined {
+  private currentWidget(): Widget | undefined {
     return this.currentLine()[this.state.selectedWidget];
   }
 
@@ -193,7 +196,7 @@ export class StatuslineConfigScreen {
   }
 
   private getActiveLineCount(): number {
-    return activeLineCount(this.state.config.lines);
+    return activeLineCount(this.state.store.lines);
   }
 
   private requestExit(): void {
@@ -215,7 +218,7 @@ export class StatuslineConfigScreen {
     this.lifecycle.beginSave();
     this.requestRender();
     try {
-      const config = cloneConfig(this.state.config);
+      const config = cloneConfig(this.state.store.toConfig());
       await this.props.onSave(config);
       this.lifecycle.markSaved(config);
       if (exitAfterSave) this.closeWithResult(this.lifecycle.closeResult(true));
@@ -235,6 +238,6 @@ export class StatuslineConfigScreen {
 
   private emitChange(): void {
     this.lifecycle.markChanged();
-    this.props.onChange(cloneConfig(this.state.config));
+    this.props.onChange(cloneConfig(this.state.store.toConfig()));
   }
 }

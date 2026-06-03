@@ -1,12 +1,7 @@
-import type { ColorName, TerminalWidthMode } from "./colors.js";
+import type { ColorName } from "./colors.js";
 import type { SeparatorStyle, WidgetSeparatorStyle } from "./separators.js";
-import type {
-  IconMode,
-  StatuslinePreset,
-  TerminalOptions,
-  WidgetOptions,
-  WidgetType,
-} from "./types.js";
+import type { IconMode, TerminalOptions, TerminalWidthMode, WidgetOptions } from "./types.js";
+import type { WidgetType } from "./widgets/registry.js";
 
 export interface PresetWidget {
   type: WidgetType;
@@ -47,18 +42,18 @@ interface PowerlineLineOptions {
 
 const FULL_WIDTH: Partial<TerminalOptions> = { widthMode: "full" satisfies TerminalWidthMode };
 
-export function widget(type: WidgetType, options: WidgetOptions = {}): PresetWidget {
+function widget(type: WidgetType, options: WidgetOptions = {}): PresetWidget {
   return { type, options };
 }
 
-export function powerSegment(
+function powerSegment(
   type: WidgetType,
   options: WidgetOptions & { fg: ColorName; bg: ColorName },
 ): PowerlineSegment {
   return { type, options };
 }
 
-export function powerlineLine(
+function powerlineLine(
   segments: readonly PowerlineSegment[],
   options: PowerlineLineOptions = {},
 ): PresetWidget[] {
@@ -121,20 +116,6 @@ function demoEmptyLine(): PresetWidget[] {
 }
 
 const BASE_PRESET_DEFINITIONS = {
-  compact: {
-    separator: "space",
-    terminal: { widthMode: "full-minus-40" },
-    lines: [
-      [
-        widget("model"),
-        widget("thinking-level"),
-        widget("text-verbosity"),
-        widget("git-branch"),
-        widget("context"),
-        widget("cost"),
-      ],
-    ],
-  },
   default: {
     separator: "dot",
     terminal: FULL_WIDTH,
@@ -147,7 +128,7 @@ const BASE_PRESET_DEFINITIONS = {
         widget("git-branch"),
         widget("git-diff", { gitDiffMode: "compact" }),
         widget("cost"),
-        widget("session-total-time"),
+        widget("total-time"),
       ],
     ],
   },
@@ -166,7 +147,7 @@ const BASE_PRESET_DEFINITIONS = {
           contextBarMode: "medium",
         }),
         powerSegment("output-speed", { fg: "black", bg: "ansi256:37" }),
-        powerSegment("session-total-time", { fg: "brightWhite", bg: "ansi256:236" }),
+        powerSegment("total-time", { fg: "brightWhite", bg: "ansi256:236" }),
       ]),
     ],
   },
@@ -186,7 +167,7 @@ const BASE_PRESET_DEFINITIONS = {
             raw: true,
             gitDiffMode: "compact",
           }),
-          powerSegment("session-total-time", { fg: "black", bg: "ansi256:176", raw: true }),
+          powerSegment("total-time", { fg: "black", bg: "ansi256:176", raw: true }),
         ],
         { start: true, end: true },
       ),
@@ -235,7 +216,7 @@ const BASE_PRESET_DEFINITIONS = {
             icon: "Ctx ",
             contextBarMode: "medium",
           }),
-          powerSegment("session-total-time", { fg: "brightWhite", bg: "ansi256:131", raw: true }),
+          powerSegment("total-time", { fg: "brightWhite", bg: "ansi256:131", raw: true }),
         ],
         {
           start: true,
@@ -292,6 +273,20 @@ const BASE_PRESET_DEFINITIONS = {
       ],
     ],
   },
+  compact: {
+    separator: "space",
+    terminal: { widthMode: "full-minus-40" },
+    lines: [
+      [
+        widget("model"),
+        widget("thinking-level"),
+        widget("text-verbosity"),
+        widget("git-branch"),
+        widget("context"),
+        widget("cost"),
+      ],
+    ],
+  },
   "pi-footer": {
     separator: "none",
     iconMode: "text",
@@ -333,7 +328,6 @@ const BASE_PRESET_DEFINITIONS = {
           contextConditionalColors: true,
           warningFg: "pi:warning",
           dangerFg: "pi:error",
-          tokenFormatStyle: "compact",
         }),
         widget("context-window", {
           icon: "/",
@@ -349,7 +343,7 @@ const BASE_PRESET_DEFINITIONS = {
       ],
     ],
   },
-} satisfies Record<Exclude<StatuslinePreset, "demo" | "demo-standard">, PresetDefinition>;
+} satisfies Record<string, PresetDefinition>;
 
 function demoLines(...presets: Array<keyof typeof BASE_PRESET_DEFINITIONS>): PresetWidget[][] {
   return presets.flatMap((preset, index) => [
@@ -359,7 +353,7 @@ function demoLines(...presets: Array<keyof typeof BASE_PRESET_DEFINITIONS>): Pre
   ]);
 }
 
-export const PRESET_DEFINITIONS: Record<StatuslinePreset, PresetDefinition> = {
+export const PRESET_DEFINITIONS = {
   ...BASE_PRESET_DEFINITIONS,
   demo: {
     separator: "none",
@@ -378,4 +372,6 @@ export const PRESET_DEFINITIONS: Record<StatuslinePreset, PresetDefinition> = {
     terminal: FULL_WIDTH,
     lines: demoLines("default", "compact", "git-heavy"),
   },
-};
+} satisfies Record<string, PresetDefinition>;
+
+export type Preset = keyof typeof PRESET_DEFINITIONS;

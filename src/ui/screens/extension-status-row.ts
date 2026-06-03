@@ -14,7 +14,7 @@ export class ExtensionStatusRowScreen extends Controller {
 
   renderScreen(width: number): string[] {
     return extensionStatusRowLines(
-      this.ctx.state.config,
+      this.ctx.state.store.settings,
       this.ctx.getExtensionStatuses,
       this.selected,
       width,
@@ -28,7 +28,10 @@ export class ExtensionStatusRowScreen extends Controller {
   }
 
   handleInput(data: string): void {
-    const count = extensionStatusRowCount(this.ctx.state.config, this.ctx.getExtensionStatuses);
+    const count = extensionStatusRowCount(
+      this.ctx.state.store.settings,
+      this.ctx.getExtensionStatuses,
+    );
     if (matchesKey(data, Key.up)) this.selected = wrap(this.selected - 1, Math.max(1, count));
     else if (matchesKey(data, Key.down))
       this.selected = wrap(this.selected + 1, Math.max(1, count));
@@ -42,12 +45,13 @@ export class ExtensionStatusRowScreen extends Controller {
     ) {
       if (
         toggleExtensionStatusRowSelection(
-          this.ctx.state.config,
+          this.ctx.state.store.settings,
           this.ctx.getExtensionStatuses,
           this.selected,
         )
-      )
+      ) {
         this.ctx.emitChange();
+      }
     }
   }
 

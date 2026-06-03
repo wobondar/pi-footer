@@ -1,31 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG } from "../src/config.js";
 import type { ScreenContext } from "../src/ui/screen-context.js";
 import { ScreenController } from "../src/ui/screen-controller.js";
 import { ScreenRender } from "../src/ui/screen-render.js";
-import { createScreenState } from "../src/ui/screen-state.js";
 import { Controller } from "../src/ui/screens/controller.js";
-import type { UiTheme } from "../src/ui/theme.js";
-
-const theme: UiTheme = {
-  accent: (text) => text,
-  dim: (text) => text,
-  muted: (text) => text,
-  success: (text) => text,
-  warning: (text) => text,
-  error: (text) => text,
-  bold: (text) => text,
-  selected: (text) => text,
-  border: (text) => text,
-  previewTitle: (text) => text,
-  configStateLabel: (_status, label) => label,
-};
+import { createTestScreenState, testTheme } from "./helpers/screen.js";
 
 function context(): ScreenContext {
   return {
-    state: createScreenState(DEFAULT_CONFIG),
-    theme,
+    state: createTestScreenState(),
+    theme: testTheme,
     getExtensionStatuses: () => new Map(),
     currentLine: () => [],
     currentWidget: () => undefined,
@@ -55,7 +39,7 @@ describe("ScreenController", () => {
 
     const ctx = context();
     const controller = new ScreenController(ctx);
-    controller.register("main", new TestScreen(ctx, new ScreenRender(theme)));
+    controller.register("main", new TestScreen(ctx, new ScreenRender(testTheme)));
 
     controller.handleInput("a");
 

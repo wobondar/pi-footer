@@ -1,4 +1,5 @@
 import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { registry } from "../src/widgets/registry.js";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -7,37 +8,41 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import {
   configWithPreset,
-  createWidget,
   DEFAULT_CONFIG,
   getConfigPath,
   loadConfig,
   normalizeConfig,
   saveConfig,
-  widgetsForPreset,
 } from "../src/config.js";
 
 let tempDir: string | undefined;
-const originalConfigEnv = process.env.PI_STATUSLINE_CONFIG;
+const originalConfigEnv = process.env.PI_FOOTER_CONFIG;
 
 afterEach(async () => {
   if (tempDir) await rm(tempDir, { recursive: true, force: true });
   tempDir = undefined;
-  if (originalConfigEnv === undefined) delete process.env.PI_STATUSLINE_CONFIG;
-  else process.env.PI_STATUSLINE_CONFIG = originalConfigEnv;
+  if (originalConfigEnv === undefined) delete process.env.PI_FOOTER_CONFIG;
+  else process.env.PI_FOOTER_CONFIG = originalConfigEnv;
 });
 
 describe("config", () => {
   it("uses pi agent extension config path by default and supports env override", () => {
-    delete process.env.PI_STATUSLINE_CONFIG;
+    delete process.env.PI_FOOTER_CONFIG;
     expect(getConfigPath()).toBe(join(getAgentDir(), "extensions", "pi-footer.json"));
 
-    process.env.PI_STATUSLINE_CONFIG = "/tmp/custom-pi-footer.json";
+    process.env.PI_FOOTER_CONFIG = "/tmp/custom-pi-footer.json";
     expect(getConfigPath()).toBe("/tmp/custom-pi-footer.json");
   });
 
   it("normalizes line widget arrays and preserves duplicates", () => {
     const config = normalizeConfig({
-      lines: [[createWidget("model"), createWidget("cost"), createWidget("model")]],
+      lines: [
+        [
+          registry.createEntry("model"),
+          registry.createEntry("cost"),
+          registry.createEntry("model"),
+        ],
+      ],
       enabled: false,
     });
     expect(config.enabled).toBe(false);
@@ -52,9 +57,14 @@ describe("config", () => {
 
   it("applies presets", () => {
     const config = configWithPreset(DEFAULT_CONFIG, "compact");
-    expect(config.lines[0]?.map((widget) => widget.type)).toEqual(
-      widgetsForPreset("compact").map((widget) => widget.type),
-    );
+    expect(config.lines[0]?.map((widget) => widget.type)).toEqual([
+      "model",
+      "thinking-level",
+      "text-verbosity",
+      "git-branch",
+      "context",
+      "cost",
+    ]);
     expect(config.preset).toBe("compact");
     expect(config.separator).toBe("space");
     expect(config.terminal.widthMode).toBe("full-minus-40");
@@ -77,7 +87,7 @@ describe("config", () => {
       "separator",
       "output-speed",
       "separator",
-      "session-total-time",
+      "total-time",
     ]);
     expect(
       config.lines[0]
@@ -132,11 +142,10 @@ describe("config", () => {
       ["custom-text"],
     ]);
     expect(config.lines[0]?.[0]?.options).toMatchObject({
-      raw: true,
       fg: "pi:success",
       text: "Preset 'pi-footer':",
     });
-    expect(config.lines[3]?.[0]?.options).toMatchObject({ raw: true, text: "" });
+    expect(config.lines[3]?.[0]?.options).toMatchObject({ text: "" });
     expect(config.lines[4]?.[0]?.options).toMatchObject({ text: "Preset 'powerline':" });
     expect(config.lines.flat().some((widget) => widget.type === "separator")).toBe(true);
   });
@@ -203,7 +212,6 @@ describe("config", () => {
       contextConditionalColors: true,
       warningFg: "pi:warning",
       dangerFg: "pi:error",
-      tokenFormatStyle: "compact",
     });
     expect(config.lines[1]?.[5]?.options).toMatchObject({
       icon: "/",
@@ -216,124 +224,15 @@ describe("config", () => {
   });
 
   it("uses semantic default widget foreground colors", () => {
-    expect(createWidget("model").options.fg).toBe("cyan");
-    expect(createWidget("git-deletions").options.fg).toBe("red");
-    expect(createWidget("git-diff").options.fg).toBe("yellow");
-    expect(createWidget("context-length").options.fg).toBe("brightBlack");
-    expect(createWidget("external-status").options.fg).toBe("default");
-    expect(createWidget("external-status").options.trimValue).toBe(0);
-    expect(createWidget("external-status").options.preserveTrimStyles).toBe(true);
-    expect(createWidget("input-speed").options.fg).toBe("brightMagenta");
-    expect(createWidget("output-speed").options.fg).toBe("brightCyan");
-    expect(createWidget("total-speed").options.fg).toBe("brightGreen");
-    expect(createWidget("model", { fg: "default" }).options.fg).toBe("default");
-    expect(createWidget("model", { fg: "pi:dim" }).options.fg).toBe("pi:dim");
-  });
-
-  it("hides empty session names by default", () => {
-    expect(createWidget("session-name").options).toMatchObject({
-      hideWhenEmpty: true,
-      text: "-",
-    });
-  });
-
-  it("defaults and normalizes cwd display style", () => {
-    expect(createWidget("cwd").options.cwdDisplayStyle).toBe("default");
-    expect(createWidget("cwd", { cwdDisplayStyle: "full-home" }).options.cwdDisplayStyle).toBe(
-      "full-home",
-    );
-    expect(
-      normalizeConfig({
-        lines: [[{ type: "cwd", options: { cwdDisplayStyle: "fish" } }]],
-      }).lines[0]?.[0]?.options.cwdDisplayStyle,
-    ).toBe("fish");
-  });
-
-  it("defaults and normalizes git branch display style", () => {
-    expect(createWidget("git-branch").options.gitBranchDisplayStyle).toBe("default");
-    expect(
-      createWidget("git-branch", {
-        gitBranchDisplayStyle: "custom",
-        surroundLeft: "[",
-        surroundRight: "]",
-      }).options,
-    ).toMatchObject({
-      gitBranchDisplayStyle: "custom",
-      surroundLeft: "[",
-      surroundRight: "]",
-    });
-    expect(
-      normalizeConfig({
-        lines: [[{ type: "git-branch", options: { gitBranchDisplayStyle: "round-brackets" } }]],
-      }).lines[0]?.[0]?.options.gitBranchDisplayStyle,
-    ).toBe("round-brackets");
-  });
-
-  it("defaults and normalizes context conditional color options", () => {
-    expect(createWidget("context").options).toMatchObject({
-      contextConditionalColors: false,
-      contextWarningPercent: 70,
-      contextDangerPercent: 90,
-      warningFg: "yellow",
-      warningBg: "default",
-      dangerFg: "red",
-      dangerBg: "default",
-    });
-    expect(
-      createWidget("context", {
-        contextConditionalColors: true,
-        contextWarningPercent: 60,
-        contextDangerPercent: 80,
-        warningFg: "ansi256:220",
-        dangerBg: "red",
-      }).options,
-    ).toMatchObject({
-      contextConditionalColors: true,
-      contextWarningPercent: 60,
-      contextDangerPercent: 80,
-      warningFg: "ansi256:220",
-      dangerBg: "red",
-    });
-  });
-
-  it("defaults and normalizes extension status trim options", () => {
-    expect(createWidget("external-status", { trimValue: 2 }).options.trimValue).toBe(2);
-    expect(createWidget("external-status", { trimValue: 20 }).options.trimValue).toBe(10);
-    expect(createWidget("external-status", { preserveTrimStyles: false }).options).toMatchObject({
-      preserveTrimStyles: false,
-    });
-    const config = normalizeConfig({
-      lines: [[{ type: "external-status", options: { trimValue: 3, preserveTrimStyles: false } }]],
-    });
-    expect(config.lines[0]?.[0]?.options.trimValue).toBe(3);
-    expect(config.lines[0]?.[0]?.options.preserveTrimStyles).toBe(false);
-  });
-
-  it("defaults and normalizes token and cost format styles", () => {
-    expect(createWidget("tokens").options.tokenFormatStyle).toBe("default");
-    expect(createWidget("context-bar").options.tokenFormatStyle).toBe("default");
-    expect(createWidget("cost").options.costFormatStyle).toBe("default");
-    expect(createWidget("cost").options.showSubscription).toBe(false);
-    expect(createWidget("input-speed").options.tokenFormatStyle).toBe("default");
-    expect(createWidget("output-speed").options.tokenFormatStyle).toBe("default");
-    expect(createWidget("total-speed").options.tokenFormatStyle).toBe("default");
-    expect(createWidget("tokens", { tokenFormatStyle: "compact" }).options.tokenFormatStyle).toBe(
-      "compact",
-    );
-    expect(createWidget("cost", { costFormatStyle: "compact" }).options.costFormatStyle).toBe(
-      "compact",
-    );
-    expect(createWidget("cost", { showSubscription: true }).options.showSubscription).toBe(true);
-    expect(
-      normalizeConfig({
-        lines: [[{ type: "tokens", options: { tokenFormatStyle: "compact" } }]],
-      }).lines[0]?.[0]?.options.tokenFormatStyle,
-    ).toBe("compact");
-    expect(
-      normalizeConfig({
-        lines: [[{ type: "cost", options: { costFormatStyle: "compact" } }]],
-      }).lines[0]?.[0]?.options.costFormatStyle,
-    ).toBe("compact");
+    expect(registry.createEntry("model").options.fg).toBe("cyan");
+    expect(registry.createEntry("git-deletions").options.fg).toBe("red");
+    expect(registry.createEntry("git-diff").options.fg).toBe("yellow");
+    expect(registry.createEntry("context-length").options.fg).toBe("brightBlack");
+    expect(registry.createEntry("runtime").options.fg).toBe("default");
+    expect(registry.createEntry("external-status").options.fg).toBe("default");
+    expect(registry.createEntry("compactions").options.fg).toBe("yellow");
+    expect(registry.createEntry("model", { fg: "default" }).options.fg).toBe("default");
+    expect(registry.createEntry("model", { fg: "pi:dim" }).options.fg).toBe("pi:dim");
   });
 
   it("loads defaults when config does not exist", async () => {
@@ -350,10 +249,28 @@ describe("config", () => {
     expect(config.lines[1]).toEqual([]);
   });
 
+  it("normalizes malformed widget options through the registry", () => {
+    const config = normalizeConfig({
+      lines: [
+        [
+          { type: "model", options: { raw: "yes", fg: "green" } },
+          { type: "spacer", options: { width: 999 } },
+          { type: "separator", options: { separator: "bad" } },
+          { type: "nope", options: { raw: true } },
+        ],
+      ],
+    });
+
+    expect(config.lines[0]?.map((widget) => widget.type)).toEqual(["model", "spacer", "separator"]);
+    expect(config.lines[0]?.[0]?.options).toMatchObject({ raw: false, fg: "green" });
+    expect(config.lines[0]?.[1]?.options).toMatchObject({ width: 40 });
+    expect(config.lines[0]?.[2]?.options).toMatchObject({ separator: "pipe", text: "|" });
+  });
+
   it("saves normalized config", async () => {
     tempDir = await mkdtemp(join(tmpdir(), "pi-footer-"));
     const path = join(tempDir, "settings.json");
-    await saveConfig({ ...DEFAULT_CONFIG, lines: [[createWidget("model")]] }, path);
+    await saveConfig({ ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] }, path);
     const saved = JSON.parse(await readFile(path, "utf8")) as {
       lines: Array<Array<{ type: string }>>;
     };

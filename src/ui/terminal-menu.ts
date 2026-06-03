@@ -1,15 +1,15 @@
-import type { ColorLevel } from "../colors.js";
-import type { StatuslineConfig } from "../types.js";
+import { COLOR_LEVEL_VALUES, type ColorLevel } from "../colors.js";
+import { TERMINAL_WIDTH_MODE_VALUES, type StatuslineSettings } from "../types.js";
 import { cycle } from "./helpers.js";
-import { COLOR_LEVEL_LABELS, COLOR_LEVELS, WIDTH_MODE_LABELS, WIDTH_MODES } from "./model.js";
+import { COLOR_LEVEL_LABELS, WIDTH_MODE_LABELS } from "./model.js";
 
-export type TerminalMenuAction = "width-mode" | "color-level";
+export const TERMINAL_MENU_ACTIONS = ["width-mode", "color-level"] as const;
+
+type TerminalMenuAction = (typeof TERMINAL_MENU_ACTIONS)[number];
 
 export const TERMINAL_MENU_HINT = "↑/↓ option • ←/→ change • esc back";
 
-export const TERMINAL_MENU_ACTIONS: readonly TerminalMenuAction[] = ["width-mode", "color-level"];
-
-export function terminalMenuFields(config: StatuslineConfig): string[] {
+export function terminalMenuFields(config: StatuslineSettings): string[] {
   return [
     `Terminal Width: ${WIDTH_MODE_LABELS[config.terminal.widthMode]}`,
     `Color Level: ${COLOR_LEVEL_LABELS[config.terminal.colorLevel]}`,
@@ -20,32 +20,13 @@ export function terminalMenuAction(index: number): TerminalMenuAction {
   return TERMINAL_MENU_ACTIONS[index] ?? "color-level";
 }
 
-export function applyTerminalWidthModeAction(
-  config: StatuslineConfig,
+export function nextTerminalWidthMode(
+  config: StatuslineSettings,
   delta: number,
-): StatuslineConfig {
-  return {
-    ...config,
-    terminal: {
-      ...config.terminal,
-      widthMode: cycle(WIDTH_MODES, config.terminal.widthMode, delta),
-    },
-  };
+): StatuslineSettings["terminal"]["widthMode"] {
+  return cycle(TERMINAL_WIDTH_MODE_VALUES, config.terminal.widthMode, delta);
 }
 
-export function nextTerminalColorLevel(config: StatuslineConfig, delta: number): ColorLevel {
-  return cycle(COLOR_LEVELS, config.terminal.colorLevel, delta);
-}
-
-export function configWithTerminalColorLevel(
-  config: StatuslineConfig,
-  colorLevel: ColorLevel,
-): StatuslineConfig {
-  return {
-    ...config,
-    terminal: {
-      ...config.terminal,
-      colorLevel,
-    },
-  };
+export function nextTerminalColorLevel(config: StatuslineSettings, delta: number): ColorLevel {
+  return cycle(COLOR_LEVEL_VALUES, config.terminal.colorLevel, delta);
 }

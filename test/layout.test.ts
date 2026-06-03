@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
+import { registry } from "../src/widgets/registry.js";
 
-import { createWidget } from "../src/config.js";
 import {
   activeLineCount,
   CONFIG_UI_RESERVED_ROWS,
@@ -10,7 +10,9 @@ import {
 
 describe("config UI layout", () => {
   it("counts non-empty status lines", () => {
-    expect(activeLineCount([[createWidget("model")], [], [createWidget("cost")]])).toBe(2);
+    expect(
+      activeLineCount([[registry.createEntry("model")], [], [registry.createEntry("cost")]]),
+    ).toBe(2);
   });
 
   it("calculates visible row count with reserved rows and active lines", () => {

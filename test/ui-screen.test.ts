@@ -1,62 +1,17 @@
-import type { Theme } from "@earendil-works/pi-coding-agent";
+import { registry } from "../src/widgets/registry.js";
 import { describe, expect, it } from "vitest";
 
-import { createWidget, DEFAULT_CONFIG } from "../src/config.js";
+import { DEFAULT_CONFIG } from "../src/config.js";
 import { EMPTY_EXTENSION_STATUSES } from "../src/extension-statuses.js";
-import type { StatuslineConfig, StatuslineData } from "../src/types.js";
+import type { StatuslineConfig } from "../src/types.js";
 import { StatuslineConfigScreen } from "../src/ui.js";
+import { makeStatuslineData } from "./helpers/render.js";
+import { identityPiTheme } from "./helpers/theme.js";
 
-const identityTheme = {
-  fg: (_color: string, text: string) => text,
-  bg: (_color: string, text: string) => text,
-  bold: (text: string) => text,
-} as unknown as Theme;
-
-const data: StatuslineData = {
-  model: "claude-sonnet-4-5",
-  provider: "anthropic",
-  sessionName: "demo",
-  sessionId: "session-123",
-  thinkingLevel: "high",
-  textVerbosity: "low",
-  git: {
-    branch: "main",
-    sha: "abc1234",
-    root: "pi-footer",
-    staged: 0,
-    unstaged: 0,
-    untracked: 0,
-    insertions: 0,
-    deletions: 0,
-    ahead: 0,
-    behind: 0,
-    remote: null,
-    isRepo: true,
-  },
-  cwd: "/tmp/pi-footer",
-  activeToolCount: 0,
-  usingSubscription: false,
-  contextTokens: 0,
-  contextMaxTokens: 100,
-  metrics: {
-    inputTokens: 0,
-    outputTokens: 0,
-    cacheReadTokens: 0,
-    cacheWriteTokens: 0,
-    totalTokens: 0,
-    costUsd: 0,
-    userMessages: 0,
-    assistantMessages: 0,
-    toolResults: 0,
-    firstTimestampMs: 0,
-    lastTimestampMs: 0,
-    compactions: 0,
-  },
-  eventWidgets: new Map(),
-};
+const data = makeStatuslineData();
 
 function screenHarness(
-  config: StatuslineConfig = { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] },
+  config: StatuslineConfig = { ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] },
 ) {
   const changes: StatuslineConfig[] = [];
   const saves: StatuslineConfig[] = [];
@@ -73,7 +28,7 @@ function screenHarness(
         saves.push(next);
       },
       onClose: (result) => closes.push(result),
-      getTheme: () => identityTheme,
+      getTheme: () => identityPiTheme,
     },
   );
   return { screen, changes, saves, closes };

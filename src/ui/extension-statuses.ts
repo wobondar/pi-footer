@@ -1,15 +1,15 @@
 import { truncateToWidth } from "@earendil-works/pi-tui";
 
-import { STATUS_KEY } from "../constants.js";
+import { STATUS_KEY } from "../config.js";
 import {
   allExtensionStatusEntries,
   toggleExtensionStatusRowKey,
   type GetExtensionStatuses,
 } from "../extension-statuses.js";
-import type { StatuslineConfig } from "../types.js";
+import type { StatuslineSettings } from "../types.js";
 
 export function extensionStatusRowLines(
-  config: StatuslineConfig,
+  config: StatuslineSettings,
   getExtensionStatuses: GetExtensionStatuses,
   selected: number,
   width: number,
@@ -50,7 +50,7 @@ export function extensionStatusRowLines(
 }
 
 export function toggleExtensionStatusRowSelection(
-  config: StatuslineConfig,
+  config: StatuslineSettings,
   getExtensionStatuses: GetExtensionStatuses,
   selected: number,
 ): boolean {
@@ -65,7 +65,7 @@ export function toggleExtensionStatusRowSelection(
 }
 
 export function extensionStatusRowCount(
-  config: StatuslineConfig,
+  config: StatuslineSettings,
   getExtensionStatuses: GetExtensionStatuses,
 ): number {
   return allExtensionStatusEntries(getExtensionStatuses(), config.extensionStatusRow, STATUS_KEY)

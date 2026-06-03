@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { registry } from "../../src/widgets/registry.js";
 
-import { createWidget, DEFAULT_CONFIG } from "../../src/config.js";
+import { DEFAULT_CONFIG } from "../../src/config.js";
 import { WidgetListScreen } from "../../src/ui/screens/widget-list.js";
 import { key } from "../helpers/keys.js";
 import { createScreenHarness } from "../helpers/screen.js";
@@ -8,11 +9,18 @@ import { createScreenHarness } from "../helpers/screen.js";
 describe("WidgetListScreen", () => {
   it("renders widgets and toggles enabled state", () => {
     const harness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] },
+      config: {
+        ...DEFAULT_CONFIG,
+        lines: [[registry.createEntry("runtime", { style: "default", displayVersion: true })]],
+      },
     });
     const screen = new WidgetListScreen(harness.ctx, harness.render, false);
 
-    expect(screen.renderScreen(100).join("\n")).toContain("Edit widgets");
+    const rendered = screen.renderScreen(100).join("\n");
+    expect(rendered).toContain("Edit widgets");
+    expect(rendered).toContain("Runtime");
+    expect(rendered).toContain("style=default");
+    expect(rendered).toContain("with-version");
 
     screen.handleInput(" ");
 
@@ -25,7 +33,13 @@ describe("WidgetListScreen", () => {
       visibleRows: 2,
       config: {
         ...DEFAULT_CONFIG,
-        lines: [[createWidget("model"), createWidget("cost"), createWidget("context")]],
+        lines: [
+          [
+            registry.createEntry("model"),
+            registry.createEntry("cost"),
+            registry.createEntry("context"),
+          ],
+        ],
       },
     });
     const screen = new WidgetListScreen(harness.ctx, harness.render, false);
@@ -66,7 +80,7 @@ describe("WidgetListScreen", () => {
 
   it("opens color editor when configured for colors", () => {
     const harness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("model")]] },
+      config: { ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] },
     });
     const screen = new WidgetListScreen(harness.ctx, harness.render, true);
 
@@ -79,7 +93,7 @@ describe("WidgetListScreen", () => {
 
   it("does not emit changes when widget actions cannot mutate", () => {
     const harness = createScreenHarness({
-      config: { ...DEFAULT_CONFIG, lines: [[createWidget("custom-text")]] },
+      config: { ...DEFAULT_CONFIG, lines: [[registry.createEntry("custom-text")]] },
     });
     const screen = new WidgetListScreen(harness.ctx, harness.render, false);
 

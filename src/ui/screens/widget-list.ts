@@ -1,5 +1,8 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
+import { registry } from "../../widgets/registry.js";
+import type { Widget } from "../../widgets/types.js";
+import { formatWidgetColorOptions, formatWidgetOptions } from "../fields.js";
 import { wrap } from "../helpers.js";
 import { pageSelection, scrollWindow } from "../navigation.js";
 import type { ScreenContext } from "../screen-context.js";
@@ -11,14 +14,11 @@ import {
   toggleWidgetEnabled,
   toggleWidgetRaw,
 } from "../widget-actions.js";
-import {
-  COLOR_WIDGET_LIST_HINT,
-  WIDGET_LIST_HINT,
-  widgetListColorItemLabel,
-  widgetListCountLabel,
-  widgetListItemLabel,
-} from "../widget-list.js";
 import { Controller } from "./controller.js";
+
+const HINT =
+  "↑/↓ select • enter options • a add • c clone • w/s move • d delete • space toggle • r raw • esc back";
+const COLOR_HINT = "↑/↓ select • pgup/pgdn jump • enter colors • esc back";
 
 export class WidgetListScreen extends Controller {
   constructor(
@@ -34,7 +34,6 @@ export class WidgetListScreen extends Controller {
     const visibleCount = this.ctx.visibleRowCount();
     const { start, end } = scrollWindow(line.length, this.ctx.state.selectedWidget, visibleCount);
     const visible = line.slice(start, end);
-    const widgetListItemLabelFn = this.colors ? widgetListColorItemLabel : widgetListItemLabel;
     const lines = [
       this.render.line(
         this.render.menuTitle(
@@ -45,11 +44,8 @@ export class WidgetListScreen extends Controller {
         ),
         width,
       ),
-      this.render.line(
-        this.ctx.theme.dim(this.colors ? COLOR_WIDGET_LIST_HINT : WIDGET_LIST_HINT),
-        width,
-      ),
-      this.render.line(this.ctx.theme.dim(widgetListCountLabel(line.length, start, end)), width),
+      this.render.line(this.ctx.theme.dim(this.colors ? COLOR_HINT : HINT), width),
+      this.render.line(this.ctx.theme.dim(this.countLabel(line.length, start, end)), width),
     ];
     if (line.length === 0)
       lines.push(
@@ -57,12 +53,7 @@ export class WidgetListScreen extends Controller {
       );
     visible.forEach((widget, offset) => {
       const index = start + offset;
-      const text = widgetListItemLabelFn(
-        index,
-        widget,
-        (value) => this.ctx.theme.dim(value),
-        (value) => this.ctx.theme.success(value),
-      );
+      const text = this.colors ? this.colorItemLabel(index, widget) : this.itemLabel(index, widget);
       lines.push(this.render.menuLine(index === this.ctx.state.selectedWidget, text, width));
     });
     return lines;
@@ -84,6 +75,25 @@ export class WidgetListScreen extends Controller {
     else if (matchesKey(data, Key.pageDown)) this.page(line.length, 1);
     else if (this.colors && matchesKey(data, Key.enter)) this.ctx.show("edit-colors");
     else if (!this.colors) this.handleEditListInput(data);
+  }
+
+  private countLabel(total: number, start: number, end: number): string {
+    const range = total === 0 ? "0-0" : `${start + 1}-${end}`;
+    return `${total} widget(s), showing ${range}`;
+  }
+
+  private itemLabel(index: number, widget: Widget): string {
+    const enabled = widget.enabled ? this.ctx.theme.success("on ") : this.ctx.theme.dim("off");
+    const indexPad = index < 9 ? " " : "";
+    const options = this.ctx.theme.dim(formatWidgetOptions(widget));
+    return `${enabled} ${index + 1}.${indexPad} ${registry.spec(widget.type).label} ${options}`;
+  }
+
+  private colorItemLabel(index: number, widget: Widget): string {
+    const enabled = widget.enabled ? this.ctx.theme.success("on ") : this.ctx.theme.dim("off");
+    const indexPad = index < 9 ? " " : "";
+    const options = this.ctx.theme.dim(formatWidgetColorOptions(widget));
+    return `${enabled} ${index + 1}.${indexPad} ${registry.spec(widget.type).label} ${options}`;
   }
 
   private handleEditListInput(data: string): void {
@@ -114,7 +124,11 @@ export class WidgetListScreen extends Controller {
   }
 
   private cloneCurrentWidget(): void {
-    const next = cloneSelectedWidget(this.ctx.currentLine(), this.ctx.state.selectedWidget);
+    const next = cloneSelectedWidget(
+      this.ctx.currentLine(),
+      this.ctx.state.selectedWidget,
+      (widget) => registry.cloneWidget(widget),
+    );
     if (next === this.ctx.state.selectedWidget) return;
     this.ctx.state.selectedWidget = next;
     this.ctx.emitChange();

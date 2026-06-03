@@ -1,40 +1,32 @@
 import { describe, expect, it } from "vitest";
 
-import { createWidget } from "../src/config.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.js";
 import { fieldsForWidget } from "../src/ui/fields.js";
 import { adjustAnsi, clamp, cycle, escapeTarget, isPrintable, wrap } from "../src/ui/helpers.js";
 import { pageSelection, rangeLabel, scrollWindow } from "../src/ui/navigation.js";
 
 describe("pi-footer UI fields", () => {
   it("hides raw, empty, and icon options for separator widgets", () => {
-    expect(fieldsForWidget(createWidget("separator")).map((field) => field.id)).toEqual([
-      "enabled",
-      "separator",
-    ]);
     expect(
-      fieldsForWidget(createWidget("separator", { separator: "custom" })).map((field) => field.id),
+      fieldsForWidget(createHydratedWidgetForTest("separator")).map((field) => field.id),
+    ).toEqual(["enabled", "separator"]);
+    expect(
+      fieldsForWidget(createHydratedWidgetForTest("separator", { separator: "custom" })).map(
+        (field) => field.id,
+      ),
     ).toEqual(["enabled", "separator", "text"]);
   });
 
   it("hides raw, empty, and icon options for flex separator widgets", () => {
-    expect(fieldsForWidget(createWidget("flex-separator")).map((field) => field.id)).toEqual([
-      "enabled",
-    ]);
+    expect(
+      fieldsForWidget(createHydratedWidgetForTest("flex-separator")).map((field) => field.id),
+    ).toEqual(["enabled"]);
   });
 
   it("keeps raw toggle available for value widgets", () => {
-    expect(fieldsForWidget(createWidget("model")).map((field) => field.id)).toContain("raw");
-  });
-
-  it("shows session name empty text only when empty values are visible", () => {
-    expect(fieldsForWidget(createWidget("session-name")).map((field) => field.id)).not.toContain(
-      "text",
-    );
     expect(
-      fieldsForWidget(createWidget("session-name", { hideWhenEmpty: false })).map(
-        (field) => field.id,
-      ),
-    ).toContain("text");
+      fieldsForWidget(createHydratedWidgetForTest("model")).map((field) => field.id),
+    ).toContain("raw");
   });
 });
 

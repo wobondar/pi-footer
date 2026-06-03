@@ -39,7 +39,8 @@
     "access": "public"
   },
   "scripts": {
-    "lint": "oxlint",
+    "lint": "oxlint -f default",
+    "lint:check": "oxlint",
     "lint:fix": "oxlint --fix",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",

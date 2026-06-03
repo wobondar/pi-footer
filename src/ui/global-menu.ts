@@ -7,27 +7,14 @@ import {
   STANDARD_COLORS,
 } from "../colors.js";
 import { cloneConfig, configWithPreset, DEFAULT_CONFIG } from "../config.js";
+import { PRESET_DEFINITIONS, type Preset } from "../presets.js";
 import { SEPARATOR_VALUES } from "../separators.js";
-import type { StatuslineConfig } from "../types.js";
+import type { StatuslineConfig, StatuslineSettings } from "../types.js";
+import { ICON_MODE_VALUES } from "../types.js";
 import { adjustAnsi, cycle } from "./helpers.js";
-import { ICON_MODE_LABELS, ICON_MODE_VALUES, PRESET_VALUES } from "./model.js";
+import { ICON_MODE_LABELS } from "./model.js";
 
-export type GlobalMenuAction =
-  | "toggle-enabled"
-  | "preset"
-  | "separator"
-  | "separator-fg"
-  | "separator-bg"
-  | "separator-fg-ansi"
-  | "separator-bg-ansi"
-  | "icon-mode"
-  | "minimalist"
-  | "reset";
-
-export const GLOBAL_MENU_HINT =
-  "↑/↓ option • ←/→ or enter change • type digits for ANSI256 • backspace delete • esc back";
-
-export const GLOBAL_MENU_ACTIONS: readonly GlobalMenuAction[] = [
+export const GLOBAL_MENU_ACTIONS = [
   "toggle-enabled",
   "preset",
   "separator",
@@ -38,9 +25,14 @@ export const GLOBAL_MENU_ACTIONS: readonly GlobalMenuAction[] = [
   "icon-mode",
   "minimalist",
   "reset",
-];
+] as const;
 
-export function globalMenuFields(config: StatuslineConfig): string[] {
+type GlobalMenuAction = (typeof GLOBAL_MENU_ACTIONS)[number];
+
+export const GLOBAL_MENU_HINT =
+  "↑/↓ option • ←/→ or enter change • type digits for ANSI256 • backspace delete • esc back";
+
+export function globalMenuFields(config: StatuslineSettings): string[] {
   return [
     `Enabled: ${config.enabled ? "on" : "off"}`,
     `Preset: ${config.preset}`,
@@ -64,47 +56,65 @@ export function applyGlobalMenuAction(
   action: GlobalMenuAction,
   delta: number,
 ): StatuslineConfig {
-  if (action === "toggle-enabled") return { ...config, enabled: !config.enabled };
   if (action === "preset")
-    return configWithPreset(config, cycle(PRESET_VALUES, config.preset, delta));
-  if (action === "separator")
-    return { ...config, separator: cycle(SEPARATOR_VALUES, config.separator, delta) };
-  if (action === "separator-fg")
-    return { ...config, separatorFg: cycleStandardColor(config.separatorFg, delta) };
-  if (action === "separator-bg")
-    return { ...config, separatorBg: cycleStandardColor(config.separatorBg, delta) };
-  if (action === "separator-fg-ansi")
-    return { ...config, separatorFg: adjustAnsi(config.separatorFg, delta) };
-  if (action === "separator-bg-ansi")
-    return { ...config, separatorBg: adjustAnsi(config.separatorBg, delta) };
-  if (action === "icon-mode")
-    return { ...config, iconMode: cycle(ICON_MODE_VALUES, config.iconMode, delta) };
-  if (action === "minimalist") return { ...config, minimalist: !config.minimalist };
-  return cloneConfig(DEFAULT_CONFIG);
+    return configWithPreset(
+      config,
+      cycle(Object.keys(PRESET_DEFINITIONS) as Preset[], config.preset, delta),
+    );
+  if (action === "reset") return cloneConfig(DEFAULT_CONFIG);
+
+  const next = { ...config };
+  applyGlobalSettingsAction(next, action, delta);
+  return next;
 }
 
-export function applyGlobalMenuTextInput(
-  config: StatuslineConfig,
+export function applyGlobalSettingsAction(
+  settings: StatuslineSettings,
+  action: GlobalMenuAction,
+  delta: number,
+): boolean {
+  if (action === "toggle-enabled") settings.enabled = !settings.enabled;
+  else if (action === "separator")
+    settings.separator = cycle(SEPARATOR_VALUES, settings.separator, delta);
+  else if (action === "separator-fg")
+    settings.separatorFg = cycleStandardColor(settings.separatorFg, delta);
+  else if (action === "separator-bg")
+    settings.separatorBg = cycleStandardColor(settings.separatorBg, delta);
+  else if (action === "separator-fg-ansi")
+    settings.separatorFg = adjustAnsi(settings.separatorFg, delta);
+  else if (action === "separator-bg-ansi")
+    settings.separatorBg = adjustAnsi(settings.separatorBg, delta);
+  else if (action === "icon-mode")
+    settings.iconMode = cycle(ICON_MODE_VALUES, settings.iconMode, delta);
+  else if (action === "minimalist") settings.minimalist = !settings.minimalist;
+  else return false;
+  return true;
+}
+
+export function applyGlobalSettingsTextInput(
+  settings: StatuslineSettings,
   action: GlobalMenuAction,
   data: string,
-): StatuslineConfig | undefined {
-  if (!/^\d$/.test(data)) return undefined;
+): boolean {
+  if (!/^\d$/.test(data)) return false;
   if (action === "separator-fg-ansi")
-    return { ...config, separatorFg: appendAnsi256Digit(config.separatorFg, data) };
-  if (action === "separator-bg-ansi")
-    return { ...config, separatorBg: appendAnsi256Digit(config.separatorBg, data) };
-  return undefined;
+    settings.separatorFg = appendAnsi256Digit(settings.separatorFg, data);
+  else if (action === "separator-bg-ansi")
+    settings.separatorBg = appendAnsi256Digit(settings.separatorBg, data);
+  else return false;
+  return true;
 }
 
-export function applyGlobalMenuBackspace(
-  config: StatuslineConfig,
+export function applyGlobalSettingsBackspace(
+  settings: StatuslineSettings,
   action: GlobalMenuAction,
-): StatuslineConfig | undefined {
+): boolean {
   if (action === "separator-fg-ansi")
-    return { ...config, separatorFg: deleteAnsi256Digit(config.separatorFg) };
-  if (action === "separator-bg-ansi")
-    return { ...config, separatorBg: deleteAnsi256Digit(config.separatorBg) };
-  return undefined;
+    settings.separatorFg = deleteAnsi256Digit(settings.separatorFg);
+  else if (action === "separator-bg-ansi")
+    settings.separatorBg = deleteAnsi256Digit(settings.separatorBg);
+  else return false;
+  return true;
 }
 
 function cycleStandardColor(current: ColorName, delta: number): ColorName {

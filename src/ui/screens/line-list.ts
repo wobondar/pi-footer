@@ -1,5 +1,6 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
+import { registry } from "../../widgets/registry.js";
 import { wrap } from "../helpers.js";
 import { LINE_LIST_HINT, lineListCountLabel, lineListItemLabel } from "../line-list.js";
 import type { ScreenView } from "../model.js";
@@ -22,11 +23,11 @@ export class LineListScreen extends Controller {
   renderScreen(width: number): string[] {
     const visibleCount = this.ctx.visibleRowCount();
     const { start, end } = scrollWindow(
-      this.ctx.state.config.lines.length,
+      this.ctx.state.store.lines.length,
       this.ctx.state.selectedLine,
       visibleCount,
     );
-    const visible = this.ctx.state.config.lines.slice(start, end);
+    const visible = this.ctx.state.store.lines.slice(start, end);
     const lines = [
       this.render.line(
         this.render.menuTitle(this.title, "Choose which status line to configure"),
@@ -34,7 +35,7 @@ export class LineListScreen extends Controller {
       ),
       this.render.line(this.ctx.theme.dim(LINE_LIST_HINT), width),
       this.render.line(
-        this.ctx.theme.dim(lineListCountLabel(this.ctx.state.config.lines.length, start, end)),
+        this.ctx.theme.dim(lineListCountLabel(this.ctx.state.store.lines.length, start, end)),
         width,
       ),
     ];
@@ -50,12 +51,12 @@ export class LineListScreen extends Controller {
     if (matchesKey(data, Key.up))
       this.ctx.state.selectedLine = wrap(
         this.ctx.state.selectedLine - 1,
-        this.ctx.state.config.lines.length,
+        this.ctx.state.store.lines.length,
       );
     else if (matchesKey(data, Key.down))
       this.ctx.state.selectedLine = wrap(
         this.ctx.state.selectedLine + 1,
-        this.ctx.state.config.lines.length,
+        this.ctx.state.store.lines.length,
       );
     else if (matchesKey(data, Key.pageUp)) this.page(-1);
     else if (matchesKey(data, Key.pageDown)) this.page(1);
@@ -64,14 +65,15 @@ export class LineListScreen extends Controller {
       this.ctx.show(this.nextView);
     } else if (data === "a") {
       this.ctx.state.selectedLine = addLineAfter(
-        this.ctx.state.config.lines,
+        this.ctx.state.store.lines,
         this.ctx.state.selectedLine,
       );
       this.ctx.emitChange();
     } else if (data === "c") {
       this.ctx.state.selectedLine = cloneLineAfter(
-        this.ctx.state.config.lines,
+        this.ctx.state.store.lines,
         this.ctx.state.selectedLine,
+        (widget) => registry.cloneWidget(widget),
       );
       this.ctx.emitChange();
     } else if (data === "w") this.move(-1);
@@ -82,25 +84,25 @@ export class LineListScreen extends Controller {
   private page(delta: -1 | 1): void {
     this.ctx.state.selectedLine = pageSelection(
       this.ctx.state.selectedLine,
-      this.ctx.state.config.lines.length,
+      this.ctx.state.store.lines.length,
       this.ctx.visibleRowCount(),
       delta,
     );
   }
 
   private move(delta: number): void {
-    const next = moveLine(this.ctx.state.config.lines, this.ctx.state.selectedLine, delta);
+    const next = moveLine(this.ctx.state.store.lines, this.ctx.state.selectedLine, delta);
     if (next === this.ctx.state.selectedLine) return;
     this.ctx.state.selectedLine = next;
     this.ctx.emitChange();
   }
 
   private delete(): void {
-    const previousLength = this.ctx.state.config.lines.length;
+    const previousLength = this.ctx.state.store.lines.length;
     this.ctx.state.selectedLine = deleteLine(
-      this.ctx.state.config.lines,
+      this.ctx.state.store.lines,
       this.ctx.state.selectedLine,
     );
-    if (this.ctx.state.config.lines.length !== previousLength) this.ctx.emitChange();
+    if (this.ctx.state.store.lines.length !== previousLength) this.ctx.emitChange();
   }
 }

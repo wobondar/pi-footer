@@ -1,4 +1,3 @@
-import type { Theme } from "@earendil-works/pi-coding-agent";
 import { describe, expect, it } from "vitest";
 
 import {
@@ -10,16 +9,14 @@ import {
   normalizeColor,
   resetAnsi256Colors,
 } from "../src/colors.js";
-
-const theme = {
-  fg: (color: string, text: string) => `<${color}>${text}</${color}>`,
-} as unknown as Theme;
+import { taggedPiTheme } from "./helpers/theme.js";
 
 describe("colors", () => {
   it("normalizes and displays standard, ansi, pi, and invalid colors", () => {
     expect(normalizeColor(1)).toBeUndefined();
     expect(normalizeColor("red")).toBe("red");
     expect(normalizeColor("pi:dim")).toBe("pi:dim");
+    expect(normalizeColor("pi:syntaxType")).toBe("pi:syntaxType");
     expect(normalizeColor("ansi256:255")).toBe("ansi256:255");
     expect(normalizeColor("ansi256:256")).toBeUndefined();
     expect(normalizeColor("ansi256:x")).toBeUndefined();
@@ -33,7 +30,9 @@ describe("colors", () => {
 
   it("applies colors across color levels", () => {
     expect(applyColors("x", "red", "blue", true, "none")).toBe("x");
-    expect(applyColors("x", "pi:dim", undefined, false, "ansi16", theme)).toBe("<dim>x</dim>");
+    expect(applyColors("x", "pi:dim", undefined, false, "ansi16", taggedPiTheme)).toBe(
+      "<dim>x</dim>",
+    );
     expect(applyColors("x", "pi:dim", undefined, false, "ansi16")).toBe("x");
     expect(applyColors("x", "red", "blue", false, "ansi16")).toContain("\x1b[");
     expect(applyColors("x", "ansi256:10", "ansi256:11", false, "ansi256")).toContain("\x1b[");

@@ -22,7 +22,9 @@ describe("ExtensionStatusRowScreen", () => {
     screen.handleInput(key.right);
     screen.handleInput(" ");
 
-    expect(harness.ctx.state.config.extensionStatusRow.hiddenKeys).not.toContain("other-extension");
+    expect(harness.ctx.state.store.settings.extensionStatusRow.hiddenKeys).not.toContain(
+      "other-extension",
+    );
     expect(harness.changes).toBe(4);
   });
 });

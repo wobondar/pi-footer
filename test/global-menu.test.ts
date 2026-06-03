@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest";
 import { DEFAULT_CONFIG } from "../src/config.js";
 import {
   applyGlobalMenuAction,
-  applyGlobalMenuBackspace,
-  applyGlobalMenuTextInput,
+  applyGlobalSettingsBackspace,
+  applyGlobalSettingsTextInput,
   GLOBAL_MENU_ACTIONS,
   GLOBAL_MENU_HINT,
   globalMenuAction,
@@ -85,31 +85,28 @@ describe("global menu", () => {
   });
 
   it("edits separator ANSI colors with digits and backspace", () => {
-    const withDigit = applyGlobalMenuTextInput(DEFAULT_CONFIG, "separator-fg-ansi", "9");
-    const bgWithDigit = applyGlobalMenuTextInput(DEFAULT_CONFIG, "separator-bg-ansi", "8");
-    expect(withDigit?.separatorFg).toBe("ansi256:9");
-    expect(bgWithDigit?.separatorBg).toBe("ansi256:8");
-    expect(applyGlobalMenuTextInput(DEFAULT_CONFIG, "separator-fg-ansi", "x")).toBeUndefined();
-    expect(applyGlobalMenuTextInput(DEFAULT_CONFIG, "separator", "1")).toBeUndefined();
+    const withDigit = { ...DEFAULT_CONFIG };
+    const bgWithDigit = { ...DEFAULT_CONFIG };
+    expect(applyGlobalSettingsTextInput(withDigit, "separator-fg-ansi", "9")).toBe(true);
+    expect(applyGlobalSettingsTextInput(bgWithDigit, "separator-bg-ansi", "8")).toBe(true);
+    expect(withDigit.separatorFg).toBe("ansi256:9");
+    expect(bgWithDigit.separatorBg).toBe("ansi256:8");
+    expect(applyGlobalSettingsTextInput({ ...DEFAULT_CONFIG }, "separator-fg-ansi", "x")).toBe(
+      false,
+    );
+    expect(applyGlobalSettingsTextInput({ ...DEFAULT_CONFIG }, "separator", "1")).toBe(false);
 
-    const clamped = applyGlobalMenuTextInput(
-      { ...DEFAULT_CONFIG, separatorFg: "ansi256:99" },
-      "separator-fg-ansi",
-      "9",
-    );
-    expect(clamped?.separatorFg).toBe("ansi256:255");
+    const clamped = { ...DEFAULT_CONFIG, separatorFg: "ansi256:99" as const };
+    expect(applyGlobalSettingsTextInput(clamped, "separator-fg-ansi", "9")).toBe(true);
+    expect(clamped.separatorFg).toBe("ansi256:255");
 
-    const deleted = applyGlobalMenuBackspace(
-      { ...DEFAULT_CONFIG, separatorFg: "ansi256:255" },
-      "separator-fg-ansi",
-    );
-    const bgDeleted = applyGlobalMenuBackspace(
-      { ...DEFAULT_CONFIG, separatorBg: "ansi256:88" },
-      "separator-bg-ansi",
-    );
-    expect(deleted?.separatorFg).toBe("ansi256:25");
-    expect(bgDeleted?.separatorBg).toBe("ansi256:8");
-    expect(applyGlobalMenuBackspace(DEFAULT_CONFIG, "separator")).toBeUndefined();
+    const deleted = { ...DEFAULT_CONFIG, separatorFg: "ansi256:255" as const };
+    const bgDeleted = { ...DEFAULT_CONFIG, separatorBg: "ansi256:88" as const };
+    expect(applyGlobalSettingsBackspace(deleted, "separator-fg-ansi")).toBe(true);
+    expect(applyGlobalSettingsBackspace(bgDeleted, "separator-bg-ansi")).toBe(true);
+    expect(deleted.separatorFg).toBe("ansi256:25");
+    expect(bgDeleted.separatorBg).toBe("ansi256:8");
+    expect(applyGlobalSettingsBackspace({ ...DEFAULT_CONFIG }, "separator")).toBe(false);
   });
 
   it("documents global menu controls", () => {

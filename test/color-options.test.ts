@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createWidget } from "../src/config.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.js";
 import {
   applyColorDigit,
   applyColorOptionField,
@@ -15,7 +15,7 @@ const field = (id: ColorOptionField["id"]): ColorOptionField => ({ id, label: id
 
 describe("color option editing", () => {
   it("toggles bold", () => {
-    const widget = createWidget("model");
+    const widget = createHydratedWidgetForTest("model");
 
     applyColorOptionField(widget, field("bold"), 1);
 
@@ -23,8 +23,8 @@ describe("color option editing", () => {
   });
 
   it("cycles standard and pi foreground and background colors", () => {
-    const widget = createWidget("model", { fg: "default" });
-    const context = createWidget("context", {
+    const widget = createHydratedWidgetForTest("model", { fg: "default" });
+    const context = createHydratedWidgetForTest("context", {
       warningFg: "default",
       warningBg: "default",
       dangerFg: "default",
@@ -50,8 +50,8 @@ describe("color option editing", () => {
   });
 
   it("adjusts ansi foreground and background colors", () => {
-    const widget = createWidget("model", { fg: "ansi256:10", bg: "ansi256:20" });
-    const context = createWidget("context", {
+    const widget = createHydratedWidgetForTest("model", { fg: "ansi256:10", bg: "ansi256:20" });
+    const context = createHydratedWidgetForTest("context", {
       warningFg: "ansi256:30",
       warningBg: "ansi256:40",
       dangerFg: "ansi256:50",
@@ -74,8 +74,8 @@ describe("color option editing", () => {
   });
 
   it("edits ansi colors with digits", () => {
-    const widget = createWidget("model");
-    const context = createWidget("context");
+    const widget = createHydratedWidgetForTest("model");
+    const context = createHydratedWidgetForTest("context");
 
     expect(applyColorDigit(widget, field("fgAnsi"), "9")).toBe(true);
     expect(applyColorDigit(widget, field("fgAnsi"), "9")).toBe(true);
@@ -113,8 +113,8 @@ describe("color option editing", () => {
   it("detects and resets custom ansi colors", () => {
     const lines = [
       [
-        createWidget("model", { fg: "ansi256:10", bg: "ansi256:20" }),
-        createWidget("context", { warningFg: "ansi256:30", dangerBg: "ansi256:40" }),
+        createHydratedWidgetForTest("model", { fg: "ansi256:10", bg: "ansi256:20" }),
+        createHydratedWidgetForTest("context", { warningFg: "ansi256:30", dangerBg: "ansi256:40" }),
       ],
     ];
 

@@ -3,86 +3,94 @@ import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 import { applyColors } from "./colors.js";
 import type { GetExtensionStatuses } from "./extension-statuses.js";
-import { renderWidget } from "./render/widgets.js";
 import { separatorText } from "./separators.js";
-import type { StatuslineConfig, StatuslineData, WidgetInstance } from "./types.js";
-
-export {
-  fishStylePath,
-  formatCost,
-  formatCount,
-  formatDuration,
-  formatPiTokenCount,
-  formatTokenCount,
-  fullHomePath,
-  renderWidget,
-  shortenPath,
-} from "./render/widgets.js";
+import type { StatuslineData, StatuslineSettings } from "./types.js";
+import { contextForDependencies } from "./widgets/context.js";
+import { registry } from "./widgets/registry.js";
+import type { WidgetStore } from "./widgets/store.js";
+import type { BaseWidgetContext, Widget } from "./widgets/types.js";
 
 export interface RenderStatuslineOptions {
   getExtensionStatuses?: GetExtensionStatuses;
   theme?: Theme;
+  requestRender?: () => void;
 }
 
 export function renderStatuslines(
-  config: StatuslineConfig,
+  store: WidgetStore,
   data: StatuslineData,
   width: number,
   options: RenderStatuslineOptions = {},
 ): string[] {
-  if (!config.enabled || width <= 0) return [];
-  const lineWidth = effectiveWidth(config, width);
-  return config.lines
-    .map((line) => renderLine(line, config, data, lineWidth, options))
+  const settings = store.settings;
+  if (!settings.enabled || width <= 0) return [];
+
+  const baseCtx: BaseWidgetContext = {
+    iconMode: settings.iconMode,
+    minimalist: settings.minimalist,
+    colorLevel: settings.terminal.colorLevel,
+    ...(options.theme ? { theme: options.theme } : {}),
+    ...(options.requestRender ? { requestRender: options.requestRender } : {}),
+  };
+  const lineWidth = effectiveWidth(settings, width);
+  return store.lines
+    .map((line) => renderLine(line, settings, lineWidth, { baseCtx, data, options }))
     .filter((line) => line.trim().length > 0);
 }
 
-export function renderStatusline(
-  config: StatuslineConfig,
-  data: StatuslineData,
-  width: number,
-  options: RenderStatuslineOptions = {},
-): string {
-  return renderStatuslines(config, data, width, options)[0] ?? "";
-}
-
-export function padRight(left: string, right: string, width: number): string {
+function padRight(left: string, right: string, width: number): string {
   const spaces = Math.max(1, width - visibleWidth(left) - visibleWidth(right));
   return truncateToWidth(`${left}${" ".repeat(spaces)}${right}`, width, "…");
 }
 
 interface RenderedSegment {
-  widget: WidgetInstance;
+  widget: Widget;
   segment: string;
 }
 
+interface RenderLineContext {
+  baseCtx: BaseWidgetContext;
+  data: StatuslineData;
+  options: RenderStatuslineOptions;
+}
+
 function renderLine(
-  line: readonly WidgetInstance[],
-  config: StatuslineConfig,
-  data: StatuslineData,
+  line: readonly Widget[],
+  settings: StatuslineSettings,
   width: number,
-  options: RenderStatuslineOptions,
+  ctx: RenderLineContext,
 ): string {
   const rendered = line
     .filter((widget) => widget.enabled)
-    .map((widget) => ({ widget, segment: renderWidget(widget, config, data, options) }));
+    .map((widget) => ({
+      widget,
+      segment:
+        widget.render(
+          contextForDependencies(
+            ctx.baseCtx,
+            registry.spec(widget.type).dependencies,
+            ctx.data,
+            ctx.options,
+          ),
+        ) ?? "",
+    }));
 
   const flexIndex = rendered.findIndex((entry) => entry.widget.type === "flex-separator");
   if (flexIndex === -1) {
-    return truncateToWidth(joinSegments(rendered, config), width, "…");
+    return truncateToWidth(joinSegments(rendered, settings), width, "…");
   }
 
-  const left = joinSegments(rendered.slice(0, flexIndex), config);
-  const right = joinSegments(rendered.slice(flexIndex + 1), config);
+  const left = joinSegments(rendered.slice(0, flexIndex), settings);
+  const right = joinSegments(rendered.slice(flexIndex + 1), settings);
   return right ? padRight(left, right, width) : truncateToWidth(left, width, "…");
 }
 
-function effectiveWidth(config: StatuslineConfig, width: number): number {
-  if (config.terminal.widthMode === "full-minus-40") return Math.max(1, width - 40);
+function effectiveWidth(settings: StatuslineSettings, width: number): number {
+  if (settings.terminal.widthMode === "full-minus-40") return Math.max(1, width - 40);
   return width;
 }
 
-function joinSegments(entries: readonly RenderedSegment[], config: StatuslineConfig): string {
+function joinSegments(entries: readonly RenderedSegment[], settings: StatuslineSettings): string {
   const segments = entries.filter((entry) => entry.segment.length > 0);
   if (segments.length === 0) return "";
 
@@ -93,11 +101,11 @@ function joinSegments(entries: readonly RenderedSegment[], config: StatuslineCon
     if (!previous || !current) continue;
     if (previous.widget.type !== "separator" && current.widget.type !== "separator") {
       output += applyColors(
-        separatorText(config.separator),
-        config.separatorFg,
-        config.separatorBg,
+        separatorText(settings.separator),
+        settings.separatorFg,
+        settings.separatorBg,
         false,
-        config.terminal.colorLevel,
+        settings.terminal.colorLevel,
       );
     }
     output += current.segment;

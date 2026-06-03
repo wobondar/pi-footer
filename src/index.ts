@@ -5,27 +5,37 @@ import type {
 } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth } from "@earendil-works/pi-tui";
 
-import { cloneConfig, configWithPreset, DEFAULT_CONFIG, loadConfig, saveConfig } from "./config.js";
-import { STATUS_KEY } from "./constants.js";
+import {
+  cloneConfig,
+  configWithPreset,
+  DEFAULT_CONFIG,
+  isPreset,
+  loadConfig,
+  saveConfig,
+  STATUS_KEY,
+} from "./config.js";
 import { EventWidgetValues, UPDATE_EVENT_WIDGET_EVENT } from "./event-widgets.js";
 import {
   EMPTY_EXTENSION_STATUSES,
   visibleExtensionStatusRowEntries,
 } from "./extension-statuses.js";
-import { EMPTY_GIT_INFO, getGitInfo } from "./git.js";
+import { EMPTY_GIT_INFO, getGitInfo, hasEnabledGitWidgets, loadGitInfo } from "./git.js";
 import { collectSessionMetrics } from "./metrics.js";
 import { renderStatuslines } from "./render.js";
-import type { StatuslineConfig, StatuslineData, StatuslinePreset } from "./types.js";
+import { isRecord, type GitInfo, type StatuslineConfig, type StatuslineData } from "./types.js";
 import { openStatuslineConfigUi } from "./ui.js";
-import { hasEnabledGitWidgets } from "./widget-groups.js";
+import { WidgetStore } from "./widgets/store.js";
 
+// Structural mirror of pi's footerData — collectStatuslineData only needs the branch getter.
 interface FooterDataLike {
   getGitBranch(): string | null;
 }
 
 export default async function statuslineExtension(pi: ExtensionAPI): Promise<void> {
   let config = await loadConfig();
+  let widgetStore = WidgetStore.fromConfig(config);
   const eventWidgets = new EventWidgetValues();
+  let liveTextVerbosity: string | undefined;
   let renderCurrentFooter: (() => void) | undefined;
   let getExtensionStatuses = (): ReadonlyMap<string, string> => EMPTY_EXTENSION_STATUSES;
 
@@ -51,8 +61,14 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
         render(width: number): string[] {
           const data = collectStatuslineData(ctx, pi, footerData, eventWidgets.values, {
             config,
+            requestRender: () => tui.requestRender(),
+            textVerbosity: liveTextVerbosity,
           });
-          const lines = renderStatuslines(config, data, width, { getExtensionStatuses, theme });
+          const lines = renderStatuslines(widgetStore, data, width, {
+            getExtensionStatuses,
+            theme,
+            requestRender: () => tui.requestRender(),
+          });
           if (lines.length === 0) return [];
 
           const statuses = visibleExtensionStatusRowEntries(
@@ -71,11 +87,16 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
     });
   }
 
+  function replaceConfig(next: StatuslineConfig): void {
+    config = next;
+    widgetStore = WidgetStore.fromConfig(config);
+  }
+
   async function setConfig(
     next: StatuslineConfig,
     ctx: ExtensionContext | ExtensionCommandContext,
   ): Promise<void> {
-    config = next;
+    replaceConfig(next);
     await saveConfig(config);
     apply(ctx);
   }
@@ -83,6 +104,20 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
   pi.events.on(UPDATE_EVENT_WIDGET_EVENT, (payload: unknown) => {
     const changed = eventWidgets.update(payload);
     if (changed) renderCurrentFooter?.();
+  });
+
+  // pi has no verbosity accessor; capture the real value from the actual provider
+  // request payload. Passive — the footer picks it up on its next render rather than
+  // forcing one. Only the openai-codex-responses payload carries text.verbosity.
+  //
+  // Handlers run in extension load order and the payload is chained forward, so we
+  // observe it as of our own position in that chain (we return undefined and never
+  // mutate it). A custom provider that bakes verbosity into the body is always seen;
+  // a later-loaded extension that rewrites text.verbosity in its own
+  // before_provider_request handler is the one case we'd miss.
+  pi.on("before_provider_request", (event) => {
+    const verbosity = readTextVerbosity(event.payload);
+    if (verbosity !== undefined) liveTextVerbosity = verbosity;
   });
 
   pi.registerCommand("footer", {
@@ -98,30 +133,37 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
           getGitBranch: () => "main",
         },
         eventWidgets.values,
-        { collectGit: true },
+        {
+          collectGit: true,
+          git: await loadGitInfo(pi, ctx.cwd, "main"),
+          textVerbosity: liveTextVerbosity,
+        },
       );
       const result = await openStatuslineConfigUi(
         ctx,
         config,
         previewData,
         (updated) => {
-          config = updated;
+          replaceConfig(updated);
           apply(ctx);
         },
         async (updated) => setConfig(updated, ctx),
         getExtensionStatuses,
       );
-      config = result.config;
+      replaceConfig(result.config);
       apply(ctx);
     },
   });
 
   pi.on("session_start", async (_event, ctx) => {
-    config = await loadConfig();
+    replaceConfig(await loadConfig());
     apply(ctx);
   });
 
   pi.on("model_select", async (_event, ctx) => {
+    // A new model selection invalidates the captured verbosity; fall back to the
+    // provider default until the next request reveals the real value.
+    liveTextVerbosity = undefined;
     apply(ctx);
   });
 
@@ -134,9 +176,15 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
 function collectStatuslineData(
   ctx: ExtensionContext | ExtensionCommandContext,
   pi: ExtensionAPI,
-  footerData: Pick<FooterDataLike, "getGitBranch">,
+  footerData: FooterDataLike,
   eventWidgets: ReadonlyMap<string, string>,
-  options: { config?: StatuslineConfig; collectGit?: boolean } = {},
+  options: {
+    config?: StatuslineConfig;
+    collectGit?: boolean;
+    requestRender?: () => void;
+    git?: GitInfo;
+    textVerbosity?: string | undefined;
+  } = {},
 ): StatuslineData {
   const contextUsage = ctx.getContextUsage();
   const collectGit =
@@ -147,8 +195,12 @@ function collectStatuslineData(
     sessionName: pi.getSessionName(),
     sessionId: ctx.sessionManager.getSessionId(),
     thinkingLevel: ctx.model?.reasoning ? pi.getThinkingLevel() : undefined,
-    textVerbosity: getTextVerbosity(ctx.model),
-    git: collectGit ? getGitInfo(ctx.cwd, footerData.getGitBranch()) : EMPTY_GIT_INFO,
+    textVerbosity: getTextVerbosity(ctx.model, options.textVerbosity),
+    git:
+      options.git ??
+      (collectGit
+        ? getGitInfo(pi, ctx.cwd, footerData.getGitBranch(), options.requestRender ?? (() => {}))
+        : EMPTY_GIT_INFO),
     cwd: ctx.cwd,
     activeToolCount: pi.getActiveTools().length,
     usingSubscription: ctx.model ? ctx.modelRegistry.isUsingOAuth(ctx.model) : false,
@@ -196,24 +248,20 @@ async function handleArgs(
   return true;
 }
 
-function getTextVerbosity(model: ExtensionContext["model"]): string | undefined {
-  if (!model) return undefined;
-  // pi currently exposes text verbosity only through the OpenAI Codex Responses provider,
-  // where the provider default is "low" unless the request overrides it internally.
-  return model.api === "openai-codex-responses" ? "low" : undefined;
+function getTextVerbosity(
+  model: ExtensionContext["model"],
+  liveVerbosity: string | undefined,
+): string | undefined {
+  // pi exposes text verbosity only through the OpenAI Codex Responses provider.
+  if (!model || model.api !== "openai-codex-responses") return undefined;
+  // Prefer the value captured from the real request payload; before the first
+  // request (or just after a model switch) fall back to the provider default.
+  return liveVerbosity ?? "low";
 }
 
-function isPreset(value: string | undefined): value is StatuslinePreset {
-  return (
-    value === "compact" ||
-    value === "default" ||
-    value === "powerline" ||
-    value === "powerline-bright" ||
-    value === "powerline-blocks" ||
-    value === "powerline-mono" ||
-    value === "git-heavy" ||
-    value === "pi-footer" ||
-    value === "demo" ||
-    value === "demo-standard"
-  );
+function readTextVerbosity(payload: unknown): string | undefined {
+  if (!isRecord(payload)) return undefined;
+  const text = payload.text;
+  if (!isRecord(text)) return undefined;
+  return typeof text.verbosity === "string" ? text.verbosity : undefined;
 }

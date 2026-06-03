@@ -1,17 +1,17 @@
-import type { StatuslineConfig } from "../types.js";
+import type { WidgetStore } from "../widgets/store.js";
 import type { ScreenView } from "./model.js";
 
 export interface ScreenState {
-  config: StatuslineConfig;
+  store: WidgetStore;
   view: ScreenView;
   viewBeforeConfirmExit: ScreenView;
   selectedLine: number;
   selectedWidget: number;
 }
 
-export function createScreenState(config: StatuslineConfig): ScreenState {
+export function createScreenState(store: WidgetStore): ScreenState {
   return {
-    config,
+    store,
     view: "main",
     viewBeforeConfirmExit: "main",
     selectedLine: 0,

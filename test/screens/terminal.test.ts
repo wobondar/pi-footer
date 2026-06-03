@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { registry } from "../../src/widgets/registry.js";
 
-import { createWidget, DEFAULT_CONFIG } from "../../src/config.js";
+import { DEFAULT_CONFIG } from "../../src/config.js";
 import {
   ColorLevelConfirmScreen,
   TerminalScreen,
@@ -18,14 +19,14 @@ describe("TerminalScreen", () => {
     expect(screen.renderScreen(100).join("\n")).toContain("Terminal Options");
 
     screen.handleInput(key.right);
-    expect(harness.ctx.state.config.terminal.widthMode).toBe("full-minus-40");
+    expect(harness.ctx.state.store.settings.terminal.widthMode).toBe("full-minus-40");
     screen.handleInput(key.left);
-    expect(harness.ctx.state.config.terminal.widthMode).toBe("full");
+    expect(harness.ctx.state.store.settings.terminal.widthMode).toBe("full");
     screen.handleInput(key.up);
     screen.handleInput(key.down);
     screen.handleInput(key.down);
     screen.handleInput(key.enter);
-    expect(harness.ctx.state.config.terminal.colorLevel).toBe("ansi16");
+    expect(harness.ctx.state.store.settings.terminal.colorLevel).toBe("ansi16");
     expect(harness.changes).toBe(3);
   });
 
@@ -35,7 +36,7 @@ describe("TerminalScreen", () => {
       config: {
         ...DEFAULT_CONFIG,
         terminal: { ...DEFAULT_CONFIG.terminal, colorLevel: "truecolor" },
-        lines: [[createWidget("model", { fg: "ansi256:10" })]],
+        lines: [[registry.createEntry("model", { fg: "ansi256:10" })]],
       },
     });
     const screen = new TerminalScreen(harness.ctx, harness.render, terminalState);
@@ -74,7 +75,7 @@ describe("ColorLevelConfirmScreen", () => {
 
     screen.handleInput(key.enter);
 
-    expect(harness.ctx.state.config.terminal.colorLevel).toBe("ansi16");
+    expect(harness.ctx.state.store.settings.terminal.colorLevel).toBe("ansi16");
     expect(harness.shown).toEqual(["terminal"]);
     expect(harness.changes).toBe(1);
   });

@@ -1,108 +1,152 @@
-import { execFileSync } from "node:child_process";
-
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { EMPTY_GIT_INFO, getGitInfo } from "../src/git.js";
+import { asyncCache } from "../src/cache.js";
+import { EMPTY_GIT_INFO, getGitInfo, loadGitInfo } from "../src/git.js";
 
-type ExecFileSyncMock = (command: string, args?: readonly string[], options?: unknown) => string;
+type ExecResult = { stdout: string; stderr: string; code: number; killed: boolean };
+type ExecMock = (command: string, args: string[], options?: unknown) => Promise<ExecResult>;
 
-vi.mock("node:child_process", () => ({
-  execFileSync: vi.fn<ExecFileSyncMock>(),
-}));
+const REPO_OUTPUT: Record<string, string> = {
+  "rev-parse --show-toplevel": "/repo",
+  "rev-parse --abbrev-ref HEAD": "main",
+  "rev-parse --short HEAD": "abc123",
+  // Unstaged entry first (leading space in column 1) so a stray stdout.trim() would miscount it.
+  "status --porcelain=v1": " M unstaged.txt\nM  staged.txt\n?? new.txt\n",
+  "diff --shortstat HEAD": "1 file changed, 2 insertions(+), 1 deletion(-)",
+  "rev-list --left-right --count @{upstream}...HEAD": "3\t4",
+  "remote get-url origin": "git@example.com:repo.git",
+};
 
-const execFileSyncMock = vi.mocked(execFileSync);
-
-function mockGit(rootPath: string, branch = "main"): void {
-  execFileSyncMock.mockImplementation((_command, args) => {
-    const gitArgs = Array.isArray(args) ? args.join(" ") : "";
-    switch (gitArgs) {
-      case "rev-parse --show-toplevel":
-        return rootPath;
-      case "rev-parse --abbrev-ref HEAD":
-        return branch;
-      case "rev-parse --short HEAD":
-        return "abc123";
-      case "status --porcelain=v1":
-        return "M  staged.txt\n M unstaged.txt\n?? new.txt\n";
-      case "diff --shortstat":
-        return "1 file changed, 2 insertions(+), 1 deletion(-)";
-      case "rev-list --left-right --count @{upstream}...HEAD":
-        return "3\t4";
-      case "remote get-url origin":
-        return "git@example.com:repo.git";
-      default:
-        throw new Error(`unexpected git args: ${gitArgs}`);
-    }
+// A pi.exec that resolves canned git output, overriding the toplevel path per test.
+function gitExec(rootPath = "/repo") {
+  return vi.fn<ExecMock>(async (_command, args) => {
+    const key = args.join(" ");
+    const output = key === "rev-parse --show-toplevel" ? rootPath : REPO_OUTPUT[key];
+    if (output === undefined) return { stdout: "", stderr: "unexpected", code: 1, killed: false };
+    return { stdout: output, stderr: "", code: 0, killed: false };
   });
 }
 
-describe("getGitInfo", () => {
-  beforeEach(() => {
-    execFileSyncMock.mockReset();
-    vi.spyOn(Date, "now").mockReturnValue(1000);
+function piWith(exec: ReturnType<typeof vi.fn>): ExtensionAPI {
+  return { exec } as unknown as ExtensionAPI;
+}
+
+const POPULATED_REPO = {
+  branch: "main",
+  sha: "abc123",
+  root: "repo",
+  staged: 1,
+  unstaged: 1,
+  untracked: 1,
+  insertions: 2,
+  deletions: 1,
+  ahead: 4,
+  behind: 3,
+  remote: "git@example.com:repo.git",
+  isRepo: true,
+};
+
+beforeEach(() => {
+  asyncCache.clear();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  asyncCache.clear();
+});
+
+describe("loadGitInfo", () => {
+  it("loads and parses git info for a repo", async () => {
+    const exec = gitExec();
+
+    const info = await loadGitInfo(piWith(exec), "/repo", "main");
+
+    expect(info).toMatchObject(POPULATED_REPO);
+    // toplevel + 5 detail commands; the branch comes from the hint, so HEAD is never resolved.
+    expect(exec).toHaveBeenCalledTimes(6);
+    expect(exec).not.toHaveBeenCalledWith(
+      "git",
+      ["rev-parse", "--abbrev-ref", "HEAD"],
+      expect.anything(),
+    );
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-    execFileSyncMock.mockReset();
+  it("resolves the branch from HEAD when no hint is given", async () => {
+    const exec = gitExec();
+
+    const info = await loadGitInfo(piWith(exec), "/repo", null);
+
+    expect(info.branch).toBe("main");
+    expect(exec).toHaveBeenCalledWith(
+      "git",
+      ["rev-parse", "--abbrev-ref", "HEAD"],
+      expect.anything(),
+    );
   });
 
-  it("reuses fresh git info for the same cwd", () => {
-    mockGit("/repo-cache");
+  it("returns EMPTY_GIT_INFO outside a repo without running detail commands", async () => {
+    const exec = vi.fn<ExecMock>(async () => ({
+      stdout: "",
+      stderr: "not a repo",
+      code: 128,
+      killed: false,
+    }));
 
-    const first = getGitInfo("/repo-cache", "main");
-    const second = getGitInfo("/repo-cache", "main");
+    const info = await loadGitInfo(piWith(exec), "/not-a-repo", null);
 
-    expect(second).toBe(first);
-    expect(first).toMatchObject({
-      branch: "main",
-      sha: "abc123",
-      root: "repo-cache",
-      staged: 1,
-      unstaged: 1,
-      untracked: 1,
-      insertions: 2,
-      deletions: 1,
-      ahead: 4,
-      behind: 3,
-      remote: "git@example.com:repo.git",
-      isRepo: true,
-    });
-    expect(execFileSyncMock).toHaveBeenCalledTimes(6);
+    expect(info).toBe(EMPTY_GIT_INFO);
+    expect(exec).toHaveBeenCalledTimes(1);
   });
 
-  it("caches non-repo lookups", () => {
-    execFileSyncMock.mockImplementation(() => {
-      throw new Error("not a repo");
-    });
+  it("treats a killed (timed-out) command as missing", async () => {
+    const exec = vi.fn<ExecMock>(async () => ({ stdout: "", stderr: "", code: 0, killed: true }));
 
-    const first = getGitInfo("/not-a-repo", null);
-    const second = getGitInfo("/not-a-repo", null);
+    const info = await loadGitInfo(piWith(exec), "/repo", "main");
 
-    expect(first).toBe(EMPTY_GIT_INFO);
-    expect(second).toBe(EMPTY_GIT_INFO);
-    expect(execFileSyncMock).toHaveBeenCalledTimes(1);
+    expect(info).toBe(EMPTY_GIT_INFO);
+  });
+});
+
+describe("getGitInfo (SWR)", () => {
+  it("serves empty immediately, then fresh data after the async refresh", async () => {
+    const exec = gitExec();
+    const pi = piWith(exec);
+    const requestRender = vi.fn<() => void>();
+
+    // Cold read: stale-now is empty, refresh kicked in the background.
+    expect(getGitInfo(pi, "/repo", "main", requestRender)).toBe(EMPTY_GIT_INFO);
+    await vi.waitFor(() => expect(requestRender).toHaveBeenCalledTimes(1));
+
+    // Warm read within TTL: populated, and no extra git commands fired.
+    expect(getGitInfo(pi, "/repo", "main", requestRender)).toMatchObject(POPULATED_REPO);
+    expect(exec).toHaveBeenCalledTimes(6);
   });
 
-  it("invalidates a fresh repo cache when pi reports a new branch", () => {
-    mockGit("/repo-branch");
+  it("dedupes concurrent cold reads into a single refresh", async () => {
+    const exec = gitExec();
+    const pi = piWith(exec);
+    const requestRender = vi.fn<() => void>();
 
-    const first = getGitInfo("/repo-branch", "main");
-    const second = getGitInfo("/repo-branch", "feature/cache");
+    getGitInfo(pi, "/repo", "main", requestRender);
+    getGitInfo(pi, "/repo", "main", requestRender);
+    await vi.waitFor(() => expect(requestRender).toHaveBeenCalled());
 
-    expect(first.branch).toBe("main");
-    expect(second.branch).toBe("feature/cache");
-    expect(second).not.toBe(first);
-    expect(execFileSyncMock).toHaveBeenCalledTimes(12);
+    expect(exec).toHaveBeenCalledTimes(6);
   });
 
-  it("shares cached repo info with child directories after root discovery", () => {
-    mockGit("/repo-root");
+  it("keys the cache by branch hint", async () => {
+    const exec = gitExec();
+    const pi = piWith(exec);
+    const requestRender = vi.fn<() => void>();
 
-    const root = getGitInfo("/repo-root", "main");
-    const child = getGitInfo("/repo-root/packages/pkg", "main");
+    getGitInfo(pi, "/repo", "main", requestRender);
+    await vi.waitFor(() => expect(requestRender).toHaveBeenCalledTimes(1));
+    expect(getGitInfo(pi, "/repo", "main", requestRender).branch).toBe("main");
 
-    expect(child).toBe(root);
-    expect(execFileSyncMock).toHaveBeenCalledTimes(7);
+    // Different branch hint -> different key -> its own refresh.
+    getGitInfo(pi, "/repo", "feature/cache", requestRender);
+    await vi.waitFor(() => expect(requestRender).toHaveBeenCalledTimes(2));
+    expect(getGitInfo(pi, "/repo", "feature/cache", requestRender).branch).toBe("feature/cache");
   });
 });
