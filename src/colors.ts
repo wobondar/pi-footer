@@ -1,10 +1,8 @@
 import type { Theme, ThemeColor } from "@earendil-works/pi-coding-agent";
-import { Chalk } from "chalk";
+import chalk from "chalk";
 
-const chalk = {
-  level: 2,
-  c: new Chalk({ level: 2 }),
-};
+// Force color level to ensure consistent output in non-TTY environments (e.g. tests)
+chalk.level = 2;
 
 export const COLOR_LEVEL_VALUES = ["truecolor", "ansi256", "ansi16", "none"] as const;
 
@@ -151,13 +149,6 @@ export function deleteAnsi256Digit(color: ColorName | undefined): ColorName {
   return `ansi256:${next === "" ? 0 : Number(next)}`;
 }
 
-function useColorLevel(level: ColorLevel) {
-  const next = level === "truecolor" ? 3 : level === "ansi256" ? 2 : 1;
-  if (chalk.level === next) return;
-  chalk.level = next;
-  chalk.c = new Chalk({ level: next });
-}
-
 export function applyColors(
   text: string,
   foreground: ColorName | undefined,
@@ -167,13 +158,12 @@ export function applyColors(
   theme?: Theme,
 ): string {
   if (level === "none") return text;
-  useColorLevel(level);
 
   let output = text;
   if (foreground && foreground !== "default")
     output = applyOne(output, foreground, false, level, theme);
   if (background && background !== "default") output = applyOne(output, background, true, level);
-  if (bold) output = chalk.c.bold(output);
+  if (bold) output = chalk.bold(output);
   return output;
 }
 
@@ -218,7 +208,7 @@ function applyOne(
   if (color.startsWith("ansi256:")) {
     const code = Number(color.slice("ansi256:".length));
     if (level === "ansi256" || level === "truecolor") {
-      return background ? chalk.c.bgAnsi256(code)(text) : chalk.c.ansi256(code)(text);
+      return background ? chalk.bgAnsi256(code)(text) : chalk.ansi256(code)(text);
     }
     return text;
   }
