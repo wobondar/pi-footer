@@ -5,7 +5,11 @@ import { getAgentDir } from "@earendil-works/pi-coding-agent";
 
 import type { ColorLevel } from "./colors.js";
 import { COLOR_LEVEL_VALUES, normalizeColor } from "./colors.js";
-import { DEFAULT_EXTENSION_STATUS_ROW, normalizeExtensionStatusRow } from "./extension-statuses.js";
+import {
+  cloneExtensionStatusRow,
+  DEFAULT_EXTENSION_STATUS_ROW,
+  normalizeExtensionStatusRow,
+} from "./extension-statuses.js";
 import {
   PRESET_DEFINITIONS,
   type Preset,
@@ -16,6 +20,7 @@ import { SEPARATOR_VALUES, type SeparatorStyle } from "./separators.js";
 import type {
   IconMode,
   StatuslineConfig,
+  StatuslineSettings,
   TerminalOptions,
   TerminalWidthMode,
   WidgetEntry,
@@ -96,17 +101,20 @@ export function normalizeConfig(input: unknown): StatuslineConfig {
   };
 }
 
+export function cloneSettings(settings: StatuslineSettings): StatuslineSettings {
+  return {
+    ...settings,
+    terminal: { ...settings.terminal },
+    extensionStatusRow: cloneExtensionStatusRow(settings.extensionStatusRow),
+  };
+}
+
 export function cloneConfig(config: StatuslineConfig): StatuslineConfig {
   return {
-    ...config,
+    ...cloneSettings(config),
     lines: config.lines.map((line) =>
       line.map((widget) => ({ ...widget, options: { ...widget.options } })),
     ),
-    terminal: { ...config.terminal },
-    extensionStatusRow: {
-      hiddenKeys: [...config.extensionStatusRow.hiddenKeys],
-      knownKeys: [...config.extensionStatusRow.knownKeys],
-    },
   };
 }
 

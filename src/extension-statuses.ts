@@ -83,7 +83,7 @@ export function normalizeExtensionStatusRow(value: unknown): ExtensionStatusRowC
   };
 }
 
-function cloneExtensionStatusRow(value: ExtensionStatusRowConfig): ExtensionStatusRowConfig {
+export function cloneExtensionStatusRow(value: ExtensionStatusRowConfig): ExtensionStatusRowConfig {
   return {
     hiddenKeys: [...value.hiddenKeys],
     knownKeys: [...value.knownKeys],

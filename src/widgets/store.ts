@@ -1,3 +1,4 @@
+import { cloneSettings } from "../config.js";
 import type { StatuslineConfig, StatuslineSettings } from "../types.js";
 import { registry } from "./registry.js";
 import type { Widget } from "./types.js";
@@ -9,9 +10,10 @@ export class WidgetStore {
   ) {}
 
   static fromConfig(config: StatuslineConfig): WidgetStore {
+    const { lines, ...settings } = config;
     return new WidgetStore(
-      cloneSettings(config),
-      config.lines.map((line) => line.map((entry) => registry.hydrateWidget(entry))),
+      cloneSettings(settings),
+      lines.map((line) => line.map((entry) => registry.hydrateWidget(entry))),
     );
   }
 
@@ -21,19 +23,4 @@ export class WidgetStore {
       lines: this.lines.map((line) => line.map((widget) => widget.toEntry())),
     };
   }
-}
-
-function cloneSettings(settings: StatuslineSettings): StatuslineSettings {
-  const { lines: _lines, ...settingsOnly } = settings as StatuslineSettings & {
-    lines?: unknown;
-  };
-
-  return {
-    ...settingsOnly,
-    terminal: { ...settings.terminal },
-    extensionStatusRow: {
-      hiddenKeys: [...settings.extensionStatusRow.hiddenKeys],
-      knownKeys: [...settings.extensionStatusRow.knownKeys],
-    },
-  };
 }
