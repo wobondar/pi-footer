@@ -6,17 +6,13 @@ import type { OptionField } from "./model.js";
 
 type OptionFieldApplyResult = "changed" | "unchanged" | WidgetEditAction;
 
-type OptionFieldEdit =
-  | { kind: "cycle"; delta: number }
-  | { kind: "appendText"; text: string }
-  | { kind: "deleteText" };
+type OptionFieldEdit = { kind: "appendText"; text: string } | { kind: "deleteText" };
 
 export function applyOptionFieldEdit(
   widget: Widget,
   field: OptionField,
   edit: OptionFieldEdit,
 ): OptionFieldApplyResult {
-  if (edit.kind === "cycle") return applyOptionField(widget, field, edit.delta);
   if (field.kind !== "text") return "unchanged";
   if (edit.kind === "appendText") {
     widget.update({ [field.id]: getTextField(widget, field.id) + edit.text });
