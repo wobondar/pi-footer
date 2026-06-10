@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { contextForDependencies, dependencyResolvers } from "../../src/widgets/context.js";
+import { contextForDependencies } from "../../src/widgets/context.js";
 import { registry } from "../../src/widgets/registry.js";
 import type { StatuslineData } from "../../src/types.js";
 import type { BaseWidgetContext, WidgetDependency } from "../../src/widgets/types.js";
@@ -56,7 +56,6 @@ const data: StatuslineData = {
 
 describe("widget dependency context", () => {
   it("covers every dependency used by registered specs", () => {
-    const resolverKeys = new Set(Object.keys(dependencyResolvers));
     const usedDependencies = new Set<WidgetDependency>();
 
     for (const spec of registry.specs) {
@@ -65,8 +64,14 @@ describe("widget dependency context", () => {
       }
     }
 
+    const ctx = contextForDependencies(baseCtx, [...usedDependencies], data, {
+      getExtensionStatuses() {
+        return new Map();
+      },
+    });
+
     for (const dependency of usedDependencies) {
-      expect(resolverKeys.has(dependency)).toBe(true);
+      expect(dependency in ctx).toBe(true);
     }
   });
 
