@@ -3,7 +3,13 @@ name: pi install smoke
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
+    inputs:
+      full_matrix:
+        description: "Run the full matrix (node 22 + 24, all install methods)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -13,16 +19,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  smoke-node:
-    name: ${{ matrix.package-manager }} / ${{ matrix.install-method }} / node ${{ matrix.node-version }}
+  smoke:
+    # Bun runs pi on its own runtime, so its job name omits the node version.
+    name: ${{ matrix.package-manager == 'bun' && format('bun / {0}', matrix.install-method) || format('{0} / {1} / node {2}', matrix.package-manager, matrix.install-method, matrix.node-version) }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
-        package-manager: [npm, pnpm]
-        install-method: [npm, git, raw-url, absolute-path, relative-path]
-        node-version: [22, 24]
+        package-manager: [npm, pnpm, bun]
+        # PRs test only the methods that can exercise the PR's own code, and
+        # fork PRs drop the git method too: pi clones the base repo, where the
+        # fork's head commit does not exist.
+        install-method: >-
+          ${{
+            github.event_name == 'pull_request'
+              && (github.event.pull_request.head.repo.full_name != github.repository
+                    && fromJSON('["relative-path"]')
+                    || fromJSON('["git", "relative-path"]'))
+              || fromJSON('["npm", "git", "raw-url", "absolute-path", "relative-path"]')
+          }}
+        node-version: ${{ github.event_name == 'workflow_dispatch' && inputs.full_matrix && fromJSON('[22, 24]') || fromJSON('[24]') }}
+        exclude:
+          - package-manager: bun
+            node-version: 22
 
     env:
       PI_TELEMETRY: "0"
@@ -45,13 +65,18 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
-          check-latest: true
 
       - name: Setup pnpm
         if: matrix.package-manager == 'pnpm'
         uses: pnpm/action-setup@v6
         with:
-          version: latest
+          version: "11"
+
+      - name: Setup Bun
+        if: matrix.package-manager == 'bun'
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.3.14"
 
       - name: Install pi with selected package manager
         shell: bash
@@ -71,6 +96,18 @@ jobs:
               pnpm config set global-bin-dir "$PNPM_HOME"
               pnpm add -g @earendil-works/pi-coding-agent
               ;;
+            bun)
+              bun_global_dir="$HOME/.bun/install/global"
+              mkdir -p "$bun_global_dir"
+              if [[ ! -f "$bun_global_dir/package.json" ]]; then
+                printf '{"private":true}\n' > "$bun_global_dir/package.json"
+              fi
+              bun_global_bin="$(bun pm bin -g)"
+              mkdir -p "$bun_global_bin"
+              echo "$bun_global_bin" >> "$GITHUB_PATH"
+              export PATH="$bun_global_bin:$PATH"
+              bun add -g @earendil-works/pi-coding-agent
+              ;;
           esac
 
           pi --version
@@ -87,6 +124,9 @@ jobs:
               ;;
             pnpm)
               npm_command='["pnpm", "--config.auto-install-peers=false", "--config.strict-peer-dependencies=false", "--config.strict-dep-builds=false"]'
+              ;;
+            bun)
+              npm_command='["bun"]'
               ;;
           esac
 
@@ -110,11 +150,18 @@ jobs:
             pnpm)
               pnpm install --prod --no-frozen-lockfile --config.auto-install-peers=false --config.strict-peer-dependencies=false --config.strict-dep-builds=false
               ;;
+            bun)
+              bun install --production
+              ;;
           esac
 
       - name: Resolve pi-footer install source
         id: source
         shell: bash
+        env:
+          # PR merge commits live under refs/pull/*, which pi's plain clone
+          # cannot fetch, so PRs pin the head sha instead.
+          COMMIT_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
         run: |
           set -euo pipefail
 
@@ -123,10 +170,10 @@ jobs:
               source="npm:pi-footer"
               ;;
             git)
-              source="git:github.com/${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+              source="git:github.com/${GITHUB_REPOSITORY}@${COMMIT_SHA}"
               ;;
             raw-url)
-              source="https://github.com/${GITHUB_REPOSITORY}@${GITHUB_SHA}"
+              source="https://github.com/${GITHUB_REPOSITORY}@${COMMIT_SHA}"
               ;;
             absolute-path)
               source="$PACKAGE_DIR"
@@ -152,194 +199,4 @@ jobs:
         shell: bash
         env:
           PI_OFFLINE: "1"
-        run: |
-          set -euo pipefail
-
-          load_log="$RUNNER_TEMP/pi-footer-load.log"
-          clean_log="$RUNNER_TEMP/pi-footer-load.clean.log"
-
-          set +e
-          { sleep 3; printf '/quit\r'; } | timeout 30s script -q -e -c "pi --no-session --no-context-files --no-skills --no-prompt-templates --no-themes" "$load_log"
-          status=$?
-          set -e
-
-          python3 - "$load_log" "$clean_log" <<'PY'
-          import re
-          import sys
-          from pathlib import Path
-
-          raw = Path(sys.argv[1]).read_text(errors="replace")
-          raw = re.sub(r"\x1b\][^\a]*(?:\a|\x1b\\)", "", raw)
-          raw = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", raw)
-          raw = raw.replace("\b", "")
-          Path(sys.argv[2]).write_text(raw)
-          print(raw[-4000:])
-          PY
-
-          if grep -E "Failed to load extension|Cannot find module" "$clean_log"; then
-            echo "pi-footer failed to load" >&2
-            exit 1
-          fi
-
-          if ! grep -F "unknown/unknown" "$clean_log"; then
-            echo "pi-footer loaded but the expected custom footer was not rendered" >&2
-            exit 1
-          fi
-
-          if [[ $status -ne 0 && $status -ne 124 ]]; then
-            echo "pi exited with unexpected status $status" >&2
-            exit "$status"
-          fi
-
-  smoke-bun:
-    name: bun / ${{ matrix.install-method }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    strategy:
-      fail-fast: false
-      matrix:
-        install-method: [npm, git, raw-url, absolute-path, relative-path]
-
-    env:
-      PI_TELEMETRY: "0"
-      PACKAGE_DIR: ${{ github.workspace }}/relative/path/pi-footer
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v6
-        with:
-          path: relative/path/pi-footer
-
-      - name: Configure temporary pi paths
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "PI_CODING_AGENT_DIR=$RUNNER_TEMP/pi-agent" >> "$GITHUB_ENV"
-          echo "PI_CODING_AGENT_SESSION_DIR=$RUNNER_TEMP/pi-sessions" >> "$GITHUB_ENV"
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: "24"
-          check-latest: true
-
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
-        with:
-          bun-version: latest
-
-      - name: Install pi with Bun
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          bun_global_dir="$HOME/.bun/install/global"
-          mkdir -p "$bun_global_dir"
-          if [[ ! -f "$bun_global_dir/package.json" ]]; then
-            printf '{"private":true}\n' > "$bun_global_dir/package.json"
-          fi
-          bun_global_bin="$(bun pm bin -g)"
-          mkdir -p "$bun_global_bin"
-          echo "$bun_global_bin" >> "$GITHUB_PATH"
-          export PATH="$bun_global_bin:$PATH"
-
-          bun add -g @earendil-works/pi-coding-agent
-          pi --version
-
-      - name: Configure pi package manager
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p "$PI_CODING_AGENT_DIR" "$PI_CODING_AGENT_SESSION_DIR"
-          cat > "$PI_CODING_AGENT_DIR/settings.json" <<JSON
-          {
-            "npmCommand": ["bun"]
-          }
-          JSON
-
-      - name: Install local package dependencies
-        if: matrix.install-method == 'absolute-path' || matrix.install-method == 'relative-path'
-        working-directory: ${{ env.PACKAGE_DIR }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          bun install --production
-
-      - name: Resolve pi-footer install source
-        id: source
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          case "${{ matrix.install-method }}" in
-            npm)
-              source="npm:pi-footer"
-              ;;
-            git)
-              source="git:github.com/${GITHUB_REPOSITORY}@${GITHUB_SHA}"
-              ;;
-            raw-url)
-              source="https://github.com/${GITHUB_REPOSITORY}@${GITHUB_SHA}"
-              ;;
-            absolute-path)
-              source="$PACKAGE_DIR"
-              ;;
-            relative-path)
-              source="./relative/path/pi-footer"
-              ;;
-          esac
-
-          echo "source=$source" >> "$GITHUB_OUTPUT"
-          echo "Resolved source: $source"
-
-      - name: Install pi-footer through pi
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          pi install "${{ steps.source.outputs.source }}"
-          pi list
-
-      - name: Load pi-footer and verify rendered footer
-        working-directory: ${{ github.workspace }}
-        shell: bash
-        env:
-          PI_OFFLINE: "1"
-        run: |
-          set -euo pipefail
-
-          load_log="$RUNNER_TEMP/pi-footer-load.log"
-          clean_log="$RUNNER_TEMP/pi-footer-load.clean.log"
-
-          set +e
-          { sleep 3; printf '/quit\r'; } | timeout 30s script -q -e -c "pi --no-session --no-context-files --no-skills --no-prompt-templates --no-themes" "$load_log"
-          status=$?
-          set -e
-
-          python3 - "$load_log" "$clean_log" <<'PY'
-          import re
-          import sys
-          from pathlib import Path
-
-          raw = Path(sys.argv[1]).read_text(errors="replace")
-          raw = re.sub(r"\x1b\][^\a]*(?:\a|\x1b\\)", "", raw)
-          raw = re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]", "", raw)
-          raw = raw.replace("\b", "")
-          Path(sys.argv[2]).write_text(raw)
-          print(raw[-4000:])
-          PY
-
-          if grep -E "Failed to load extension|Cannot find module" "$clean_log"; then
-            echo "pi-footer failed to load" >&2
-            exit 1
-          fi
-
-          if ! grep -F "unknown/unknown" "$clean_log"; then
-            echo "pi-footer loaded but the expected custom footer was not rendered" >&2
-            exit 1
-          fi
-
-          if [[ $status -ne 0 && $status -ne 124 ]]; then
-            echo "pi exited with unexpected status $status" >&2
-            exit "$status"
-          fi
+        run: ${{ env.PACKAGE_DIR }}/.github/scripts/verify-load-render.sh
