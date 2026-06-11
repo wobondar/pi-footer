@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.1](https://github.com/wobondar/pi-footer/compare/v0.4.0...v0.4.1) (2026-06-11)
+
+
+### Bug Fixes
+
+* **ci:** merge smoke jobs, add PR trigger with trimmed matrix ([#31](https://github.com/wobondar/pi-footer/issues/31)) ([e1911a2](https://github.com/wobondar/pi-footer/commit/e1911a286aae2e913fa54a6ec8efc20de5a6a208))
+* refactor widget context and simplify clone settings ([#30](https://github.com/wobondar/pi-footer/issues/30)) ([6ce2973](https://github.com/wobondar/pi-footer/commit/6ce2973dbbc0294ddfec5cac0bd9a468c942c09f))
+
+
+### Dependencies
+
+* **deps-dev:** bump @vitest/coverage-v8 from 4.1.7 to 4.1.8 ([#25](https://github.com/wobondar/pi-footer/issues/25)) ([61fb783](https://github.com/wobondar/pi-footer/commit/61fb783d42fd3552db818864548bcfc506263e8b))
+* **deps-dev:** bump oxfmt from 0.52.0 to 0.53.0 ([#24](https://github.com/wobondar/pi-footer/issues/24)) ([9b36f14](https://github.com/wobondar/pi-footer/commit/9b36f148ad5b7d6261a92c59721853e404c15493))
+* **deps-dev:** bump oxlint from 1.67.0 to 1.68.0 ([#26](https://github.com/wobondar/pi-footer/issues/26)) ([0817eb9](https://github.com/wobondar/pi-footer/commit/0817eb9d8fb80c87fba726fa372135c5ba568875))
+* **deps-dev:** bump vitest from 4.1.7 to 4.1.8 ([#27](https://github.com/wobondar/pi-footer/issues/27)) ([ea1d50c](https://github.com/wobondar/pi-footer/commit/ea1d50c64e7710333240d1a9cf182a17e312c032))
+
 ## [0.4.0](https://github.com/wobondar/pi-footer/compare/v0.3.0...v0.4.0) (2026-06-04)
 
 
