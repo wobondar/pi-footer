@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.4.2](https://github.com/wobondar/pi-footer/compare/v0.4.1...v0.4.2) (2026-07-01)
+
+
+### Dependencies
+
+* **deps-dev:** bump @types/node from 25.9.1 to 26.0.0 ([#39](https://github.com/wobondar/pi-footer/issues/39)) ([fc53522](https://github.com/wobondar/pi-footer/commit/fc53522b3fa0a528b201bd8baa0e8d6039cde11c))
+* **deps-dev:** bump @types/node from 26.0.0 to 26.1.0 ([#42](https://github.com/wobondar/pi-footer/issues/42)) ([1ef23c8](https://github.com/wobondar/pi-footer/commit/1ef23c849166e5fc0163d4bd5541f29890a8a0fc))
+* **deps-dev:** bump @vitest/coverage-v8 from 4.1.8 to 4.1.9 ([#41](https://github.com/wobondar/pi-footer/issues/41)) ([d660601](https://github.com/wobondar/pi-footer/commit/d660601e3d83ca0c0074d6b170d131ed62c73a48))
+* **deps-dev:** bump oxfmt from 0.53.0 to 0.54.0 ([#32](https://github.com/wobondar/pi-footer/issues/32)) ([89d4bdb](https://github.com/wobondar/pi-footer/commit/89d4bdbfa21965843f9b6e18953963b0bf5d33d6))
+* **deps-dev:** bump oxfmt from 0.54.0 to 0.55.0 ([#37](https://github.com/wobondar/pi-footer/issues/37)) ([5aaa074](https://github.com/wobondar/pi-footer/commit/5aaa0746608a88e6393c44c30ddcf289d27eedfe))
+* **deps-dev:** bump oxfmt from 0.55.0 to 0.57.0 ([#45](https://github.com/wobondar/pi-footer/issues/45)) ([d4733d5](https://github.com/wobondar/pi-footer/commit/d4733d5e3533ac7d05509fd523af9052ac04bc40))
+* **deps-dev:** bump oxlint from 1.68.0 to 1.69.0 ([#33](https://github.com/wobondar/pi-footer/issues/33)) ([f31d05f](https://github.com/wobondar/pi-footer/commit/f31d05f50c663328b483e3e05286ed9739c833de))
+* **deps-dev:** bump oxlint from 1.69.0 to 1.70.0 ([#40](https://github.com/wobondar/pi-footer/issues/40)) ([405b880](https://github.com/wobondar/pi-footer/commit/405b880960684e5021cc3ea85de1396ad28d9c3b))
+* **deps-dev:** bump oxlint from 1.70.0 to 1.72.0 ([#43](https://github.com/wobondar/pi-footer/issues/43)) ([6ef9cc5](https://github.com/wobondar/pi-footer/commit/6ef9cc5894b82406abbc8f4e6ad91f4607f15714))
+* **deps-dev:** bump oxlint-tsgolint from 0.23.0 to 0.24.0 ([#44](https://github.com/wobondar/pi-footer/issues/44)) ([a75ad99](https://github.com/wobondar/pi-footer/commit/a75ad998f87f46ea2e624fcf698a202c0eb82a3d))
+* **deps-dev:** bump vitest from 4.1.8 to 4.1.9 ([#38](https://github.com/wobondar/pi-footer/issues/38)) ([c47b551](https://github.com/wobondar/pi-footer/commit/c47b551f99bd50765537ab122f7b48576c05123a))
+* **deps:** bump @earendil-works/pi-coding-agent and related pkgs to 0.80.3 ([#46](https://github.com/wobondar/pi-footer/issues/46)) ([62f4aef](https://github.com/wobondar/pi-footer/commit/62f4aefead342afec04b3150979039c7cf0e98e8))
+* **deps:** bump @earendil-works/pi-coding-agent from 0.74.0 to 0.79.8 ([#35](https://github.com/wobondar/pi-footer/issues/35)) ([e8ac663](https://github.com/wobondar/pi-footer/commit/e8ac663bad29ad9195dce2da8189d6e61b8e1e9d))
+* **deps:** bump actions/checkout from 6 to 7 ([#36](https://github.com/wobondar/pi-footer/issues/36)) ([3aad8f4](https://github.com/wobondar/pi-footer/commit/3aad8f40598c4ba6cdbc79155f7f3d7f26f84323))
+
 ## [0.4.1](https://github.com/wobondar/pi-footer/compare/v0.4.0...v0.4.1) (2026-06-11)
 
 
