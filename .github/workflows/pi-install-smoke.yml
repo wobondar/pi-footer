@@ -62,7 +62,7 @@ jobs:
           echo "PI_CODING_AGENT_SESSION_DIR=$RUNNER_TEMP/pi-sessions" >> "$GITHUB_ENV"
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
 
