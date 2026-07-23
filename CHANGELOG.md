@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.0](https://github.com/wobondar/pi-footer/compare/v0.4.2...v0.5.0) (2026-07-23)
+
+
+### Features
+
+* add cache hit rate widget ([#57](https://github.com/wobondar/pi-footer/issues/57)) ([edce7d2](https://github.com/wobondar/pi-footer/commit/edce7d29f0ae48ddde4ff9cf3247f0a6dbd82676))
+
+
+### Dependencies
+
+* **deps-dev:** bump @vitest/coverage-v8 from 4.1.9 to 4.1.10 ([#48](https://github.com/wobondar/pi-footer/issues/48)) ([66236c0](https://github.com/wobondar/pi-footer/commit/66236c04ac8c13da532bc38878751d64a10881a7))
+* **deps-dev:** bump oxfmt from 0.57.0 to 0.58.0 ([#49](https://github.com/wobondar/pi-footer/issues/49)) ([d0d0ebb](https://github.com/wobondar/pi-footer/commit/d0d0ebbcd5540275fb3d9580004419393588599e))
+* **deps-dev:** bump oxfmt from 0.58.0 to 0.59.0 ([#55](https://github.com/wobondar/pi-footer/issues/55)) ([71bc5cf](https://github.com/wobondar/pi-footer/commit/71bc5cf53955fa4f077b0593d966bc95fb27b971))
+* **deps-dev:** bump oxlint from 1.72.0 to 1.73.0 ([#52](https://github.com/wobondar/pi-footer/issues/52)) ([5ce5632](https://github.com/wobondar/pi-footer/commit/5ce56329002c7854e4c527e38c095bfd0232c29e))
+* **deps-dev:** bump oxlint from 1.73.0 to 1.74.0 ([#54](https://github.com/wobondar/pi-footer/issues/54)) ([6ccfccd](https://github.com/wobondar/pi-footer/commit/6ccfccd6272fdb1f8dbf405c88de04832d24f6e0))
+* **deps-dev:** bump oxlint-tsgolint from 0.24.0 to 0.25.0 ([#56](https://github.com/wobondar/pi-footer/issues/56)) ([a138fc8](https://github.com/wobondar/pi-footer/commit/a138fc8e794c649134a6bbae1c85d32abf6898be))
+* **deps-dev:** bump vitest from 4.1.9 to 4.1.10 ([#51](https://github.com/wobondar/pi-footer/issues/51)) ([6408e67](https://github.com/wobondar/pi-footer/commit/6408e6769cc07cc8f33661eba24583330be87ab9))
+* **deps:** bump actions/setup-node from 6 to 7 ([#53](https://github.com/wobondar/pi-footer/issues/53)) ([bee2dfb](https://github.com/wobondar/pi-footer/commit/bee2dfbbd97ade2f3266503fb7db70e1dbdebaf8))
+
 ## [0.4.2](https://github.com/wobondar/pi-footer/compare/v0.4.1...v0.4.2) (2026-07-01)
 
 
