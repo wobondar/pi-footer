@@ -65,6 +65,14 @@ const data: StatuslineData = {
     lastTimestampMs: 120_000,
     compactions: 0,
   },
+  turnMetrics: {
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadTokens: 0,
+    cacheWriteTokens: 0,
+    totalTokens: 0,
+    costUsd: 0,
+  },
   eventWidgets: new Map(),
 };
 
@@ -102,10 +110,18 @@ describe("renderStatusline", () => {
       {
         ...data,
         metrics: { ...data.metrics, cacheReadTokens: 533_000, cacheWriteTokens: 1200 },
+        turnMetrics: {
+          inputTokens: 100,
+          outputTokens: 50,
+          cacheReadTokens: 300,
+          cacheWriteTokens: 100,
+          totalTokens: 550,
+          costUsd: 0.01,
+        },
       },
       120,
     );
-    expect(linesWithCache[1]).toContain("↑12k ↓6.8k R533k W1.2k $0.123 25%/100k");
+    expect(linesWithCache[1]).toContain("↑12k ↓6.8k R533k W1.2k CH60.0% $0.123 25%/100k");
   });
 
   it("supports pi foreground colors", () => {
@@ -174,6 +190,7 @@ describe("renderStatusline", () => {
             bare("total-tokens"),
             bare("cache-read"),
             bare("cache-write"),
+            bare("cache-hit-rate"),
             bare("context-length"),
             bare("context-bar"),
             bare("cost"),

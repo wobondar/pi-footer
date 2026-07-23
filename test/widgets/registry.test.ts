@@ -16,6 +16,7 @@ const VALID_DEPENDENCIES = new Set<WidgetDependency>([
   "thinkingLevel",
   "textVerbosity",
   "metrics",
+  "turnMetrics",
   "usingSubscription",
   "git",
   "activeToolCount",

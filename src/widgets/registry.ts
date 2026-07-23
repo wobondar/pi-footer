@@ -42,6 +42,7 @@ import { ToolResultsWidget } from "./session/tool-results.js";
 import { TotalMessagesWidget } from "./session/total-messages.js";
 import { TotalTimeWidget } from "./session/total-time.js";
 import { UserMessagesWidget } from "./session/user-messages.js";
+import { CacheHitRateWidget } from "./tokens/cache-hit-rate.js";
 import { CacheReadWidget } from "./tokens/cache-read.js";
 import { CacheWriteWidget } from "./tokens/cache-write.js";
 import { ContextBarWidget } from "./tokens/context-bar.js";
@@ -107,6 +108,7 @@ const WIDGETS = [
   CostWidget,
   CacheReadWidget,
   CacheWriteWidget,
+  CacheHitRateWidget,
   TokensWidget,
   InputTokensWidget,
   OutputTokensWidget,

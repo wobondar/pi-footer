@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { collectSessionMetrics } from "../src/metrics.js";
+import { collectSessionMetrics, collectTurnMetrics } from "../src/metrics.js";
 
 describe("collectSessionMetrics", () => {
   it("collects message counts, usage, cost, and timestamps", () => {
@@ -42,6 +42,48 @@ describe("collectSessionMetrics", () => {
       firstTimestampMs: 1000,
       lastTimestampMs: 4000,
       compactions: 1,
+    });
+  });
+
+  it("collects the latest assistant turn metrics", () => {
+    expect(
+      collectTurnMetrics([
+        {
+          message: {
+            role: "assistant",
+            usage: { input: 10, cacheRead: 20, cacheWrite: 30 },
+          },
+        },
+        { message: { role: "toolResult" } },
+        {
+          message: {
+            role: "assistant",
+            usage: {
+              input: 40,
+              output: 70,
+              cacheRead: 50,
+              cacheWrite: 60,
+              totalTokens: 0,
+              cost: { total: 0.02 },
+            },
+          },
+        },
+      ]),
+    ).toEqual({
+      inputTokens: 40,
+      outputTokens: 70,
+      cacheReadTokens: 50,
+      cacheWriteTokens: 60,
+      totalTokens: 220,
+      costUsd: 0.02,
+    });
+    expect(collectTurnMetrics([{ message: { role: "user" } }])).toEqual({
+      inputTokens: 0,
+      outputTokens: 0,
+      cacheReadTokens: 0,
+      cacheWriteTokens: 0,
+      totalTokens: 0,
+      costUsd: 0,
     });
   });
 

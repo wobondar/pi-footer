@@ -316,6 +316,12 @@ const BASE_PRESET_DEFINITIONS = {
           tokenFormatStyle: "compact",
           hideWhenZero: true,
         }),
+        widget("cache-hit-rate", {
+          icon: " CH",
+          fg: "pi:dim",
+          hideWhenZero: true,
+          cacheHitSource: "turn",
+        }),
         widget("cost", {
           icon: " ",
           fg: "pi:dim",

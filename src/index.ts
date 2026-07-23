@@ -20,7 +20,7 @@ import {
   visibleExtensionStatusRowEntries,
 } from "./extension-statuses.js";
 import { EMPTY_GIT_INFO, getGitInfo, hasEnabledGitWidgets, loadGitInfo } from "./git.js";
-import { collectSessionMetrics } from "./metrics.js";
+import { collectSessionMetrics, collectTurnMetrics } from "./metrics.js";
 import { renderStatuslines } from "./render.js";
 import { isRecord, type GitInfo, type StatuslineConfig, type StatuslineData } from "./types.js";
 import { openStatuslineConfigUi } from "./ui.js";
@@ -207,6 +207,7 @@ function collectStatuslineData(
     contextTokens: contextUsage?.tokens ?? undefined,
     contextMaxTokens: contextUsage?.contextWindow,
     metrics: collectSessionMetrics(ctx.sessionManager.getBranch()),
+    turnMetrics: collectTurnMetrics(ctx.sessionManager.getEntries()),
     eventWidgets,
   };
 }

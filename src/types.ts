@@ -79,6 +79,15 @@ export interface SessionMetrics {
   compactions: number;
 }
 
+export interface TurnMetrics {
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+  totalTokens: number;
+  costUsd: number;
+}
+
 export interface GitInfo {
   branch: string | null;
   sha: string | null;
@@ -108,5 +117,6 @@ export interface StatuslineData {
   contextTokens: number | undefined;
   contextMaxTokens: number | undefined;
   metrics: SessionMetrics;
+  turnMetrics: TurnMetrics;
   eventWidgets: ReadonlyMap<string, string>;
 }

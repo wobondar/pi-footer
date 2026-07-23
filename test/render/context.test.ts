@@ -51,6 +51,14 @@ const data: StatuslineData = {
     lastTimestampMs: 10,
     compactions: 11,
   },
+  turnMetrics: {
+    inputTokens: 12,
+    outputTokens: 15,
+    cacheReadTokens: 13,
+    cacheWriteTokens: 14,
+    totalTokens: 54,
+    costUsd: 0.02,
+  },
   eventWidgets: new Map([["flag", "on"]]),
 };
 

@@ -66,6 +66,14 @@ export function makeStatuslineData(overrides: Partial<StatuslineData> = {}): Sta
       lastTimestampMs: 0,
       compactions: 0,
     },
+    turnMetrics: {
+      inputTokens: 0,
+      outputTokens: 0,
+      cacheReadTokens: 0,
+      cacheWriteTokens: 0,
+      totalTokens: 0,
+      costUsd: 0,
+    },
     eventWidgets: new Map(),
     ...overrides,
   };

@@ -188,6 +188,7 @@ The **Value example** column shows the widget value before labels/icons and colo
 | `Total Tokens` | Total tokens from usage records. | Token format, hide when zero. | `182.4k` |
 | `Cache Read` | Cache-read token total. | Token format, hide when zero. | `120k` |
 | `Cache Write` | Cache-write token total. | Token format, hide when zero. | `12k` |
+| `Cache Hit Rate` | Session or latest turn cache hit percentage. | Source, display style, hide when zero. | `72.4%` |
 | `Context Length` | Current context token estimate/usage. | Token format, conditional colors, hide when zero. | `50k` |
 | `Context %` | Used context percentage. | Conditional colors. | `25%` |
 | `Context Remaining` | Remaining context percentage. | Conditional colors. | `75%` |

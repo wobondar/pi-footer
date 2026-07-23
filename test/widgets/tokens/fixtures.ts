@@ -1,4 +1,4 @@
-import type { SessionMetrics } from "../../../src/types.js";
+import type { SessionMetrics, TurnMetrics } from "../../../src/types.js";
 
 export const TOKEN_METRICS: SessionMetrics = {
   inputTokens: 12_345,
@@ -13,4 +13,13 @@ export const TOKEN_METRICS: SessionMetrics = {
   firstTimestampMs: 0,
   lastTimestampMs: 120_000,
   compactions: 0,
+};
+
+export const TURN_METRICS: TurnMetrics = {
+  inputTokens: 100,
+  outputTokens: 50,
+  cacheReadTokens: 300,
+  cacheWriteTokens: 100,
+  totalTokens: 550,
+  costUsd: 0.01,
 };

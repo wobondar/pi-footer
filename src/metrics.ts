@@ -1,4 +1,4 @@
-import { isRecord, type SessionMetrics } from "./types.js";
+import { isRecord, type SessionMetrics, type TurnMetrics } from "./types.js";
 
 // Intentionally loose structural projection of the `usage` field on a pi session message entry.
 // Fields stay `unknown` and are validated at runtime (see isRecord usage below) rather than being
@@ -75,6 +75,41 @@ export function collectSessionMetrics(entries: readonly unknown[]): SessionMetri
     metrics.totalTokens +=
       numberOrZero(usage.totalTokens) || input + output + cacheRead + cacheWrite;
     metrics.costUsd += numberOrZero(usage.cost?.total);
+  }
+
+  return metrics;
+}
+
+export function collectTurnMetrics(entries: readonly unknown[]): TurnMetrics {
+  const metrics: TurnMetrics = {
+    inputTokens: 0,
+    outputTokens: 0,
+    cacheReadTokens: 0,
+    cacheWriteTokens: 0,
+    totalTokens: 0,
+    costUsd: 0,
+  };
+
+  for (let index = entries.length - 1; index >= 0; index -= 1) {
+    const message = getMessage(entries[index]);
+    if (message?.role !== "assistant") continue;
+
+    const usage = getUsage(message.usage);
+    if (!usage) continue;
+
+    const input = numberOrZero(usage.input);
+    const output = numberOrZero(usage.output);
+    const cacheRead = numberOrZero(usage.cacheRead);
+    const cacheWrite = numberOrZero(usage.cacheWrite);
+
+    metrics.inputTokens = input;
+    metrics.outputTokens = output;
+    metrics.cacheReadTokens = cacheRead;
+    metrics.cacheWriteTokens = cacheWrite;
+    metrics.totalTokens =
+      numberOrZero(usage.totalTokens) || input + output + cacheRead + cacheWrite;
+    metrics.costUsd = numberOrZero(usage.cost?.total);
+    return metrics;
   }
 
   return metrics;

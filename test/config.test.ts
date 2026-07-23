@@ -132,6 +132,7 @@ describe("config", () => {
         "tokens",
         "cache-read",
         "cache-write",
+        "cache-hit-rate",
         "cost",
         "context",
         "context-window",
@@ -165,6 +166,7 @@ describe("config", () => {
       "tokens",
       "cache-read",
       "cache-write",
+      "cache-hit-rate",
       "cost",
       "context",
       "context-window",
@@ -201,19 +203,25 @@ describe("config", () => {
       hideWhenZero: true,
     });
     expect(config.lines[1]?.[3]?.options).toMatchObject({
+      icon: " CH",
+      fg: "pi:dim",
+      hideWhenZero: true,
+      cacheHitSource: "turn",
+    });
+    expect(config.lines[1]?.[4]?.options).toMatchObject({
       icon: " ",
       fg: "pi:dim",
       costFormatStyle: "compact",
       showSubscription: true,
     });
-    expect(config.lines[1]?.[4]?.options).toMatchObject({
+    expect(config.lines[1]?.[5]?.options).toMatchObject({
       icon: " ",
       fg: "pi:dim",
       contextConditionalColors: true,
       warningFg: "pi:warning",
       dangerFg: "pi:error",
     });
-    expect(config.lines[1]?.[5]?.options).toMatchObject({
+    expect(config.lines[1]?.[6]?.options).toMatchObject({
       icon: "/",
       fg: "pi:dim",
       contextConditionalColors: true,
