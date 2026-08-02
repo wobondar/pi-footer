@@ -1,6 +1,6 @@
 {
   "name": "pi-footer",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Configurable, Ultimate multi-line footer/statusline extension for pi",
   "type": "module",
   "keywords": [

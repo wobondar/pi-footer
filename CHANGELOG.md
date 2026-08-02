@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.5.1](https://github.com/wobondar/pi-footer/compare/v0.5.0...v0.5.1) (2026-08-02)
+
+
+### Dependencies
+
+* **deps-dev:** bump oxfmt from 0.59.0 to 0.60.0 ([#59](https://github.com/wobondar/pi-footer/issues/59)) ([0efe7d7](https://github.com/wobondar/pi-footer/commit/0efe7d7ab686ddbe1e5c0999522e91d9fe6f85c0))
+* **deps-dev:** bump oxfmt from 0.60.0 to 0.61.0 ([#65](https://github.com/wobondar/pi-footer/issues/65)) ([a97e9c5](https://github.com/wobondar/pi-footer/commit/a97e9c59d242aa163880f1deb4c92e077a45003e))
+* **deps-dev:** bump oxlint from 1.74.0 to 1.75.0 ([#61](https://github.com/wobondar/pi-footer/issues/61)) ([ad8721b](https://github.com/wobondar/pi-footer/commit/ad8721b2d55a38037457730dfa19e8ea1d164474))
+* **deps-dev:** bump oxlint from 1.75.0 to 1.76.0 ([#64](https://github.com/wobondar/pi-footer/issues/64)) ([9fa9d68](https://github.com/wobondar/pi-footer/commit/9fa9d68b1f98c16ba3589815e5fc0a398baedcfd))
+* **deps-dev:** bump oxlint-tsgolint from 0.25.0 to 7.0.2001 ([#60](https://github.com/wobondar/pi-footer/issues/60)) ([893f562](https://github.com/wobondar/pi-footer/commit/893f5629eef911285dda7d2c90e3dca59ed5f9a8))
+* **deps-dev:** bump postcss from 8.5.17 to 8.5.23 ([#62](https://github.com/wobondar/pi-footer/issues/62)) ([a1cc8dd](https://github.com/wobondar/pi-footer/commit/a1cc8dd9719f55d46db35af8520de219fc49bc3c))
+* **deps-dev:** bump typescript from 6.0.3 to 7.0.2 ([#50](https://github.com/wobondar/pi-footer/issues/50)) ([d4f6dff](https://github.com/wobondar/pi-footer/commit/d4f6dff394bb3f77c7c4abd488ab0bd6783678d7))
+* **deps:** bump @earendil-works/pi-coding-agent from 0.80.3 to 0.83.0 ([#67](https://github.com/wobondar/pi-footer/issues/67)) ([126d938](https://github.com/wobondar/pi-footer/commit/126d938e9c211caee59d16c39abe5a8cd53d22a7))
+* **deps:** bump chalk from 5.6.2 to 6.0.0 ([#63](https://github.com/wobondar/pi-footer/issues/63)) ([fe399b8](https://github.com/wobondar/pi-footer/commit/fe399b86d97b48bc6f391345ddc77b5419033efb))
+
 ## [0.5.0](https://github.com/wobondar/pi-footer/compare/v0.4.2...v0.5.0) (2026-07-23)
 
 
