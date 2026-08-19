@@ -5,7 +5,7 @@ export const CostWidget = defineWidget({
   label: "Session Cost",
   category: "Tokens",
   description: "Estimated session cost",
-  dependencies: ["metrics", "usingSubscription"],
+  dependencies: ["metrics", "usingSubscription", "provider"],
   baseOptions: ["raw", "icon"],
   baseOptionDefaults: {},
   properties: [
@@ -37,10 +37,29 @@ export const CostWidget = defineWidget({
         showInColors: false,
       },
     },
+    {
+      id: "hideForProviders",
+      label: "Hide for providers",
+      kind: "text",
+      description: "Comma-separated provider IDs that hide the session cost",
+      default: "",
+      options: {
+        showInWidgets: true,
+        showInColors: false,
+        listProperty: "hide-for",
+        quoteValue: true,
+      },
+    },
   ],
   icons: { emoji: "💸", nerd: "󱐋", text: "cost" },
   defaultStyle: { fg: "green", bg: "default", bold: false },
   render({ ctx, options, renderWidget }) {
+    const hiddenProviders = options.hideForProviders
+      .split(",")
+      .map((provider) => provider.trim())
+      .filter(Boolean);
+    if (ctx.provider && hiddenProviders.includes(ctx.provider)) return undefined;
+
     const cost =
       options.costFormatStyle === "compact"
         ? `$${ctx.metrics.costUsd.toFixed(3)}`

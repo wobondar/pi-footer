@@ -40,15 +40,16 @@ function cost(options: WidgetOptions = {}) {
   return registry.createWidget("cost", options);
 }
 
-function ctx(overrides: Partial<WidgetContext<["metrics", "usingSubscription"]>> = {}) {
+function ctx(overrides: Partial<WidgetContext<["metrics", "usingSubscription", "provider"]>> = {}) {
   return {
     iconMode: "text",
     minimalist: false,
     colorLevel: "none",
     metrics,
     usingSubscription: false,
+    provider: "anthropic",
     ...overrides,
-  } satisfies WidgetContext<["metrics", "usingSubscription"]>;
+  } satisfies WidgetContext<["metrics", "usingSubscription", "provider"]>;
 }
 
 describe("CostWidget", () => {
@@ -56,7 +57,7 @@ describe("CostWidget", () => {
     const widget = cost();
     expect(widget).toBeInstanceOf(WidgetInstance);
     expect(registry.spec(widget.type)).toBe(CostWidget);
-    expect(CostWidget.dependencies).toEqual(["metrics", "usingSubscription"]);
+    expect(CostWidget.dependencies).toEqual(["metrics", "usingSubscription", "provider"]);
     expect(CostWidget.icons).toEqual({ emoji: "💸", nerd: "󱐋", text: "cost" });
     expect(CostWidget.defaultStyle).toEqual({ fg: "green", bg: "default", bold: false });
     expect(CostWidget.baseOptionDefaults).toEqual({});
@@ -65,6 +66,7 @@ describe("CostWidget", () => {
       icon: "",
       costFormatStyle: "default",
       showSubscription: false,
+      hideForProviders: "",
       fg: "green",
       bg: "default",
       bold: false,
@@ -90,6 +92,14 @@ describe("CostWidget", () => {
     ).toBe("$1.23 (sub)");
   });
 
+  it("hides the cost for configured provider IDs", () => {
+    const widget = cost({ hideForProviders: " openai-codex, github-copilot " });
+    expect(widget.render(ctx({ provider: "openai-codex" }))).toBeUndefined();
+    expect(widget.render(ctx({ provider: "github-copilot" }))).toBeUndefined();
+    expect(widget.render(ctx({ provider: "anthropic" }))).toBe("cost $1.23");
+    expect(widget.render(ctx({ provider: undefined }))).toBe("cost $1.23");
+  });
+
   it("exposes metadata fields, values, summaries, and generic metadata editing", () => {
     const costFields = fieldsForWidget(cost());
     expect(costFields.map((field) => field.id)).toEqual([
@@ -98,15 +108,25 @@ describe("CostWidget", () => {
       "icon",
       "costFormatStyle",
       "showSubscription",
+      "hideForProviders",
     ]);
     const costFormatField = costFields.find((field) => field.id === "costFormatStyle");
     const subscriptionField = costFields.find((field) => field.id === "showSubscription");
-    if (!costFormatField || !subscriptionField) throw new Error("Missing cost metadata fields");
+    const hiddenProvidersField = costFields.find((field) => field.id === "hideForProviders");
+    if (!costFormatField || !subscriptionField || !hiddenProvidersField) {
+      throw new Error("Missing cost metadata fields");
+    }
     expect(fieldValue(cost({ costFormatStyle: "compact" }), costFormatField)).toBe("Compact");
     expect(fieldValue(cost({ showSubscription: true }), subscriptionField)).toBe("on");
+    expect(fieldValue(cost({ hideForProviders: "openai-codex" }), hiddenProvidersField)).toBe(
+      "openai-codex",
+    );
     expect(formatWidgetOptions(cost())).toBe("");
     expect(formatWidgetOptions(cost({ costFormatStyle: "compact" }))).toBe("format=Compact");
     expect(formatWidgetOptions(cost({ showSubscription: true }))).toBe("show-sub");
+    expect(formatWidgetOptions(cost({ hideForProviders: "openai-codex" }))).toBe(
+      "hide-for='openai-codex'",
+    );
     expect(formatWidgetOptions(cost({ raw: true, icon: "Cost: " }))).toBe("raw • icon='Cost: '");
     expect(formatWidgetColorOptions(cost({ fg: "red", bold: true }))).toBe("fg=Red • bold");
 
@@ -121,12 +141,22 @@ describe("CostWidget", () => {
     expect(
       normalizeConfig({
         lines: [
-          [{ type: "cost", options: { costFormatStyle: "compact", showSubscription: true } }],
+          [
+            {
+              type: "cost",
+              options: {
+                costFormatStyle: "compact",
+                showSubscription: true,
+                hideForProviders: "openai-codex,github-copilot",
+              },
+            },
+          ],
         ],
       }).lines[0]?.[0]?.options,
     ).toMatchObject({
       costFormatStyle: "compact",
       showSubscription: true,
+      hideForProviders: "openai-codex,github-copilot",
     });
     expect(
       normalizeConfig({
@@ -137,6 +167,7 @@ describe("CostWidget", () => {
               options: {
                 costFormatStyle: "wide",
                 showSubscription: "yes",
+                hideForProviders: 42,
                 hideWhenEmpty: true,
               },
             },
@@ -151,6 +182,7 @@ describe("CostWidget", () => {
       bold: false,
       costFormatStyle: "default",
       showSubscription: false,
+      hideForProviders: "",
     });
   });
 });
