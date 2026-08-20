@@ -1,6 +1,7 @@
 node_modules
 coverage/
-dist/
+dist/*
+!dist/index.js
 tmp/
 .DS_Store
 .env
