@@ -14,12 +14,13 @@
   ],
   "pi": {
     "extensions": [
-      "./src/index.ts"
+      "./dist/index.js"
     ],
     "video": "https://raw.githubusercontent.com/wobondar/pi-footer/main/assets/demo-video.mp4",
     "image": "https://raw.githubusercontent.com/wobondar/pi-footer/main/assets/demo-teaser.gif"
   },
   "files": [
+    "dist/",
     "src/",
     "README.md",
     "CHANGELOG.md",
@@ -45,9 +46,11 @@
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "typecheck": "tsc --noEmit",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=esm --outfile=dist/index.js --external:@earendil-works/pi-coding-agent --external:@earendil-works/pi-tui",
+    "build:check": "npm run build && git diff --exit-code -- dist/index.js",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "prepublishOnly": "npm run typecheck && npm run fmt:check && npm run lint && npm run test"
+    "prepublishOnly": "npm run typecheck && npm run fmt:check && npm run lint && npm run test && npm run build"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
@@ -56,6 +59,7 @@
   "devDependencies": {
     "@types/node": "^26.0.0",
     "@vitest/coverage-v8": "^4.1.5",
+    "esbuild": "^0.28.2",
     "oxfmt": "^0.63.0",
     "oxlint": "^1.62.0",
     "oxlint-tsgolint": "^7.0.2001",
