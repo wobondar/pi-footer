@@ -194,9 +194,9 @@ The **Value example** column shows the widget value before labels/icons and colo
 | `Context Remaining` | Remaining context percentage. | Conditional colors. | `75%` |
 | `Context Bar` | Progress bar plus context usage. | Display: default, short, short-only, medium; token format; conditional colors. | `[████████░░░░░░░░░░░░░░░░░░░░░░░░] 50k/200k (25%)` |
 | `Session Cost` | Estimated session cost. | Cost format, show subscription marker. | `$0.1234` |
-| `Input Speed` | Average input tokens per minute across transcript span. | Token format, hide when zero. | `20.1k/min` |
-| `Output Speed` | Average output tokens per minute across transcript span. | Token format, hide when zero. | `1.1k/min` |
-| `Total Speed` | Average total tokens per minute across transcript span. | Token format, hide when zero. | `21.2k/min` |
+| `Input Speed` | Average input token speed across transcript span. | Token format, speed unit (per minute/second), hide when zero. | `20.1k/min` |
+| `Output Speed` | Average output token speed across transcript span. | Token format, speed unit (per minute/second), hide when zero. | `1.1k/min` |
+| `Total Speed` | Average total token speed across transcript span. | Token format, speed unit (per minute/second), hide when zero. | `21.2k/min` |
 
 ### Session widgets
 

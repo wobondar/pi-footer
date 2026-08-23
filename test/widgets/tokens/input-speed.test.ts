@@ -45,6 +45,7 @@ describe("InputSpeedWidget", () => {
       hideWhenZero: false,
       icon: "",
       tokenFormatStyle: "default",
+      speedUnit: "per-minute",
       fg: "brightMagenta",
       bg: "default",
       bold: false,
@@ -55,6 +56,8 @@ describe("InputSpeedWidget", () => {
     expect(inputSpeed().render(ctx())).toBe("in/min 6.2k/min");
     expect(inputSpeed({ icon: "In: " }).render(ctx())).toBe("In: 6.2k/min");
     expect(inputSpeed({ raw: true }).render(ctx())).toBe("6.2k/min");
+    expect(inputSpeed({ speedUnit: "per-second" }).render(ctx())).toBe("in/s 103/s");
+    expect(inputSpeed({ raw: true, speedUnit: "per-second" }).render(ctx())).toBe("103/s");
     expect(
       inputSpeed({ raw: true, tokenFormatStyle: "compact" }).render(
         ctx({ metrics: { ...TOKEN_METRICS, lastTimestampMs: 60_000 } }),
@@ -98,9 +101,11 @@ describe("InputSpeedWidget", () => {
       "hideWhenZero",
       "icon",
       "tokenFormatStyle",
+      "speedUnit",
     ]);
     expect(formatWidgetOptions(inputSpeed())).toBe("");
     expect(formatWidgetOptions(inputSpeed({ tokenFormatStyle: "compact" }))).toBe("format=Compact");
+    expect(formatWidgetOptions(inputSpeed({ speedUnit: "per-second" }))).toBe("rate=Per second");
     expect(formatWidgetOptions(inputSpeed({ hideWhenZero: true }))).toBe("hide-zero");
     expect(formatWidgetOptions(inputSpeed({ raw: true, icon: "S " }))).toBe("raw • icon='S '");
     expect(formatWidgetColorOptions(inputSpeed({ fg: "red", bold: true }))).toBe("fg=Red • bold");
@@ -131,6 +136,7 @@ describe("InputSpeedWidget", () => {
       bg: "default",
       bold: false,
       tokenFormatStyle: "default",
+      speedUnit: "per-minute",
     });
   });
 });
