@@ -60,7 +60,7 @@
     "oxlint": "^1.62.0",
     "oxlint-tsgolint": "^7.0.2001",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.5"
+    "vitest": "^5.0.0"
   },
   "dependencies": {
     "chalk": "^6.0.0"
