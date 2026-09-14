@@ -4,6 +4,9 @@ export const SEPARATOR_VALUES = [
   "pipe",
   "space",
   "powerline",
+  "chevron",
+  "chevron-circle",
+  "arrow-circle",
   "dash",
   "comma",
 ] as const;
@@ -32,6 +35,9 @@ export function separatorText(separator: SeparatorStyle): string {
   if (separator === "powerline") return "  ";
   if (separator === "dash") return " - ";
   if (separator === "comma") return ", ";
+  if (separator === "chevron") return " \uf460 ";
+  if (separator === "chevron-circle") return " \uf138 ";
+  if (separator === "arrow-circle") return " \uf0a9 ";
   return " • ";
 }
 
