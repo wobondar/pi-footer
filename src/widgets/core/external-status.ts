@@ -1,5 +1,5 @@
-import type { WidgetOptions } from "../../types.js";
-import { defineWidget } from "../types.js";
+import type { WidgetOptions } from "../../types.ts";
+import { defineWidget } from "../types.ts";
 
 export const ExtensionStatusWidget = defineWidget({
   type: "external-status",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { LINE_LIST_HINT, lineListCountLabel, lineListItemLabel } from "../src/ui/line-list.js";
+import { LINE_LIST_HINT, lineListCountLabel, lineListItemLabel } from "../src/ui/line-list.ts";
 
 describe("line list UI", () => {
   it("formats count and visible range", () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { GlobalScreen } from "../../src/ui/screens/global.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+import { GlobalScreen } from "../../src/ui/screens/global.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("GlobalScreen", () => {
   it("renders and applies global options", () => {

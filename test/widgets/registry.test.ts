@@ -1,11 +1,11 @@
 /// <reference types="vite/client" />
 import { describe, expect, it } from "vitest";
 
-import { EventValueWidget } from "../../src/widgets/core/event.js";
-import { ModelWidget } from "../../src/widgets/core/model.js";
-import { WidgetInstance } from "../../src/widgets/instance.js";
-import { registry } from "../../src/widgets/registry.js";
-import type { WidgetDependency } from "../../src/widgets/types.js";
+import { EventValueWidget } from "../../src/widgets/core/event.ts";
+import { ModelWidget } from "../../src/widgets/core/model.ts";
+import { WidgetInstance } from "../../src/widgets/instance.ts";
+import { registry } from "../../src/widgets/registry.ts";
+import type { WidgetDependency } from "../../src/widgets/types.ts";
 
 const VALID_DEPENDENCIES = new Set<WidgetDependency>([
   "cwd",

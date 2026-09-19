@@ -1,4 +1,4 @@
-import { defineWidget } from "../types.js";
+import { defineWidget } from "../types.ts";
 
 export const ActiveToolsWidget = defineWidget({
   type: "active-tools",

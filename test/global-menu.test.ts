@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG } from "../src/config.js";
+import { DEFAULT_CONFIG } from "../src/config.ts";
 import {
   applyGlobalMenuAction,
   applyGlobalSettingsBackspace,
@@ -9,7 +9,7 @@ import {
   GLOBAL_MENU_HINT,
   globalMenuAction,
   globalMenuFields,
-} from "../src/ui/global-menu.js";
+} from "../src/ui/global-menu.ts";
 
 describe("global menu", () => {
   it("keeps actions in field order", () => {

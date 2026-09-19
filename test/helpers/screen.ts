@@ -1,11 +1,11 @@
-import { DEFAULT_CONFIG, cloneConfig } from "../../src/config.js";
-import type { GetExtensionStatuses } from "../../src/extension-statuses.js";
-import type { StatuslineConfig } from "../../src/types.js";
-import type { ScreenContext } from "../../src/ui/screen-context.js";
-import { ScreenRender } from "../../src/ui/screen-render.js";
-import { createScreenState, type ScreenState } from "../../src/ui/screen-state.js";
-import { WidgetStore } from "../../src/widgets/store.js";
-import type { UiTheme } from "../../src/ui/theme.js";
+import { DEFAULT_CONFIG, cloneConfig } from "../../src/config.ts";
+import type { GetExtensionStatuses } from "../../src/extension-statuses.ts";
+import type { StatuslineConfig } from "../../src/types.ts";
+import type { ScreenContext } from "../../src/ui/screen-context.ts";
+import { ScreenRender } from "../../src/ui/screen-render.ts";
+import { createScreenState, type ScreenState } from "../../src/ui/screen-state.ts";
+import { WidgetStore } from "../../src/widgets/store.ts";
+import type { UiTheme } from "../../src/ui/theme.ts";
 
 export const testTheme: UiTheme = {
   accent: (text) => text,
