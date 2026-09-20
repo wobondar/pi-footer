@@ -1,7 +1,7 @@
-import { COLOR_LEVEL_VALUES, type ColorLevel } from "../colors.js";
-import { TERMINAL_WIDTH_MODE_VALUES, type StatuslineSettings } from "../types.js";
-import { cycle } from "./helpers.js";
-import { COLOR_LEVEL_LABELS, WIDTH_MODE_LABELS } from "./model.js";
+import { COLOR_LEVEL_VALUES, type ColorLevel } from "../colors.ts";
+import { TERMINAL_WIDTH_MODE_VALUES, type StatuslineSettings } from "../types.ts";
+import { cycle } from "./helpers.ts";
+import { COLOR_LEVEL_LABELS, WIDTH_MODE_LABELS } from "./model.ts";
 
 export const TERMINAL_MENU_ACTIONS = ["width-mode", "color-level"] as const;
 

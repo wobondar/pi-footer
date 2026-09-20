@@ -1,20 +1,20 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import { registry } from "../../widgets/registry.js";
-import type { Widget } from "../../widgets/types.js";
-import { formatWidgetColorOptions, formatWidgetOptions } from "../fields.js";
-import { wrap } from "../helpers.js";
-import { pageSelection, scrollWindow } from "../navigation.js";
-import type { ScreenContext } from "../screen-context.js";
-import type { ScreenRender } from "../screen-render.js";
+import { registry } from "../../widgets/registry.ts";
+import type { Widget } from "../../widgets/types.ts";
+import { formatWidgetColorOptions, formatWidgetOptions } from "../fields.ts";
+import { wrap } from "../helpers.ts";
+import { pageSelection, scrollWindow } from "../navigation.ts";
+import type { ScreenContext } from "../screen-context.ts";
+import type { ScreenRender } from "../screen-render.ts";
 import {
   cloneSelectedWidget,
   deleteSelectedWidget,
   moveWidget,
   toggleWidgetEnabled,
   toggleWidgetRaw,
-} from "../widget-actions.js";
-import { Controller } from "./controller.js";
+} from "../widget-actions.ts";
+import { Controller } from "./controller.ts";
 
 const HINT =
   "↑/↓ select • enter options • a add • c clone • w/s move • d delete • space toggle • r raw • esc back";

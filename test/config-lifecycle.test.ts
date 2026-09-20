@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { registry } from "../src/widgets/registry.js";
+import { registry } from "../src/widgets/registry.ts";
 
-import { DEFAULT_CONFIG } from "../src/config.js";
-import { ConfigLifecycle } from "../src/ui/config-lifecycle.js";
+import { DEFAULT_CONFIG } from "../src/config.ts";
+import { ConfigLifecycle } from "../src/ui/config-lifecycle.ts";
 
 describe("ConfigLifecycle", () => {
   it("starts clean and closes with the initial saved config", () => {

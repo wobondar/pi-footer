@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import type { WidgetOptions } from "../../../src/types.js";
-import { colorFields, fieldsForWidget, formatWidgetOptions } from "../../../src/ui/fields.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { ContextLengthWidget } from "../../../src/widgets/tokens/context-length.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
+import { colorFields, fieldsForWidget, formatWidgetOptions } from "../../../src/ui/fields.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { ContextLengthWidget } from "../../../src/widgets/tokens/context-length.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
 
 function contextLength(options: WidgetOptions = {}) {
   return registry.createWidget("context-length", options);

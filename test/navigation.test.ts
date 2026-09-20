@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
-import { fieldsForWidget } from "../src/ui/fields.js";
-import { adjustAnsi, clamp, cycle, escapeTarget, isPrintable, wrap } from "../src/ui/helpers.js";
-import { pageSelection, rangeLabel, scrollWindow } from "../src/ui/navigation.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
+import { fieldsForWidget } from "../src/ui/fields.ts";
+import { adjustAnsi, clamp, cycle, escapeTarget, isPrintable, wrap } from "../src/ui/helpers.ts";
+import { pageSelection, rangeLabel, scrollWindow } from "../src/ui/navigation.ts";
 
 describe("pi-footer UI fields", () => {
   it("hides raw, empty, and icon options for separator widgets", () => {

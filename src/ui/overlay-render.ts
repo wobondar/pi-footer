@@ -1,12 +1,12 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 
-import type { GetExtensionStatuses } from "../extension-statuses.js";
-import { renderStatuslines } from "../render.js";
-import type { StatuslineData } from "../types.js";
-import type { WidgetStore } from "../widgets/store.js";
-import type { ScreenRender } from "./screen-render.js";
-import type { UiTheme } from "./theme.js";
-import { configTitleBarParts, previewTitleParts } from "./title-bar.js";
+import type { GetExtensionStatuses } from "../extension-statuses.ts";
+import { renderStatuslines } from "../render.ts";
+import type { StatuslineData } from "../types.ts";
+import type { WidgetStore } from "../widgets/store.ts";
+import type { ScreenRender } from "./screen-render.ts";
+import type { UiTheme } from "./theme.ts";
+import { configTitleBarParts, previewTitleParts } from "./title-bar.ts";
 
 interface OverlayRenderOptions {
   width: number;

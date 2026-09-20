@@ -1,5 +1,5 @@
-import { cloneConfig } from "../config.js";
-import type { StatuslineConfig } from "../types.js";
+import { cloneConfig } from "../config.ts";
+import type { StatuslineConfig } from "../types.ts";
 
 export type ConfigChange = (config: StatuslineConfig) => void;
 export type ConfigSave = (config: StatuslineConfig) => Promise<void>;

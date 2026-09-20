@@ -1,18 +1,18 @@
-import type { ColorName } from "../colors.js";
+import type { ColorName } from "../colors.ts";
 import {
   ansi256Digits,
   appendAnsi256Digit,
   colorDisplayName,
   deleteAnsi256Digit,
   STANDARD_COLORS,
-} from "../colors.js";
-import { cloneConfig, configWithPreset, DEFAULT_CONFIG } from "../config.js";
-import { PRESET_DEFINITIONS, type Preset } from "../presets.js";
-import { SEPARATOR_VALUES } from "../separators.js";
-import type { StatuslineConfig, StatuslineSettings } from "../types.js";
-import { ICON_MODE_VALUES } from "../types.js";
-import { adjustAnsi, cycle } from "./helpers.js";
-import { ICON_MODE_LABELS } from "./model.js";
+} from "../colors.ts";
+import { cloneConfig, configWithPreset, DEFAULT_CONFIG } from "../config.ts";
+import { PRESET_DEFINITIONS, type Preset } from "../presets.ts";
+import { SEPARATOR_VALUES } from "../separators.ts";
+import type { StatuslineConfig, StatuslineSettings } from "../types.ts";
+import { ICON_MODE_VALUES } from "../types.ts";
+import { adjustAnsi, cycle } from "./helpers.ts";
+import { ICON_MODE_LABELS } from "./model.ts";
 
 export const GLOBAL_MENU_ACTIONS = [
   "toggle-enabled",

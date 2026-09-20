@@ -1,4 +1,4 @@
-import type { ColorName } from "../../colors.js";
+import type { ColorName } from "../../colors.ts";
 
 export function colorPair(
   fg: ColorName | undefined,

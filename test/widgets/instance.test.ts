@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { WidgetInstance } from "../../src/widgets/instance.js";
-import type { WidgetSpecUnion } from "../../src/widgets/registry.js";
-import type { WidgetContext } from "../../src/widgets/types.js";
-import { defineWidget } from "../../src/widgets/types.js";
+import { WidgetInstance } from "../../src/widgets/instance.ts";
+import type { WidgetSpecUnion } from "../../src/widgets/registry.ts";
+import type { WidgetContext } from "../../src/widgets/types.ts";
+import { defineWidget } from "../../src/widgets/types.ts";
 
 const TEST_ICONS = { emoji: "🧪", nerd: "T", text: "test" };
 

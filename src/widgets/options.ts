@@ -1,6 +1,6 @@
-import { normalizeColor } from "../colors.js";
-import type { WidgetOptions } from "../types.js";
-import type { WidgetProperty, WidgetPropertyDefault, WidgetSpec } from "./types.js";
+import { normalizeColor } from "../colors.ts";
+import type { WidgetOptions } from "../types.ts";
+import type { WidgetProperty, WidgetPropertyDefault, WidgetSpec } from "./types.ts";
 
 const SYSTEM_BASE_OPTION_DEFAULTS = {
   raw: false,

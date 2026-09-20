@@ -1,6 +1,6 @@
-import { applyColors, stripAnsi } from "../colors.js";
-import type { WidgetEntry, WidgetOptions } from "../types.js";
-import type { WidgetSpecUnion } from "./registry.js";
+import { applyColors, stripAnsi } from "../colors.ts";
+import type { WidgetEntry, WidgetOptions } from "../types.ts";
+import type { WidgetSpecUnion } from "./registry.ts";
 import type {
   BaseWidgetContext,
   ContextFor,
@@ -9,7 +9,7 @@ import type {
   Widget,
   WidgetContext,
   WidgetRenderOptions,
-} from "./types.js";
+} from "./types.ts";
 
 export class WidgetInstance<TSpec extends WidgetSpecUnion = WidgetSpecUnion> implements Widget {
   constructor(

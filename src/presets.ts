@@ -1,7 +1,7 @@
-import type { ColorName } from "./colors.js";
-import type { SeparatorStyle, WidgetSeparatorStyle } from "./separators.js";
-import type { IconMode, TerminalOptions, TerminalWidthMode, WidgetOptions } from "./types.js";
-import type { WidgetType } from "./widgets/registry.js";
+import type { ColorName } from "./colors.ts";
+import type { SeparatorStyle, WidgetSeparatorStyle } from "./separators.ts";
+import type { IconMode, TerminalOptions, TerminalWidthMode, WidgetOptions } from "./types.ts";
+import type { WidgetType } from "./widgets/registry.ts";
 
 export interface PresetWidget {
   type: WidgetType;

@@ -1,8 +1,8 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import { wrap } from "../helpers.js";
-import type { ScreenView } from "../model.js";
-import { Controller } from "./controller.js";
+import { wrap } from "../helpers.ts";
+import type { ScreenView } from "../model.ts";
+import { Controller } from "./controller.ts";
 
 type MenuAction =
   | { type: "view"; view: ScreenView }

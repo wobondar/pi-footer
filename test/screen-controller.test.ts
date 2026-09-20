@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import type { ScreenContext } from "../src/ui/screen-context.js";
-import { ScreenController } from "../src/ui/screen-controller.js";
-import { ScreenRender } from "../src/ui/screen-render.js";
-import { Controller } from "../src/ui/screens/controller.js";
-import { createTestScreenState, testTheme } from "./helpers/screen.js";
+import type { ScreenContext } from "../src/ui/screen-context.ts";
+import { ScreenController } from "../src/ui/screen-controller.ts";
+import { ScreenRender } from "../src/ui/screen-render.ts";
+import { Controller } from "../src/ui/screens/controller.ts";
+import { createTestScreenState, testTheme } from "./helpers/screen.ts";
 
 function context(): ScreenContext {
   return {

@@ -1,4 +1,4 @@
-import type { SessionMetrics, TurnMetrics } from "../../../src/types.js";
+import type { SessionMetrics, TurnMetrics } from "../../../src/types.ts";
 
 export const TOKEN_METRICS: SessionMetrics = {
   inputTokens: 12_345,

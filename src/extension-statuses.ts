@@ -1,4 +1,4 @@
-import { isRecord } from "./types.js";
+import { isRecord } from "./types.ts";
 
 export const EMPTY_STATUS_LABEL = "[Empty status]";
 

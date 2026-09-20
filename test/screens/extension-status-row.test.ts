@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { ExtensionStatusRowScreen } from "../../src/ui/screens/extension-status-row.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+import { ExtensionStatusRowScreen } from "../../src/ui/screens/extension-status-row.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("ExtensionStatusRowScreen", () => {
   it("renders and toggles extension status visibility", () => {
