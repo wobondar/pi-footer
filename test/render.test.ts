@@ -1,6 +1,7 @@
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { afterEach, describe, expect, it } from "vitest";
 
+import { stripAnsi } from "../src/colors.js";
 import { configWithPreset, DEFAULT_CONFIG, normalizeConfig } from "../src/config.js";
 import { renderStatuslines as renderStatuslinesFromStore } from "../src/render.js";
 import type { StatuslineData, WidgetEntry } from "../src/types.js";
@@ -473,6 +474,203 @@ describe("renderStatusline", () => {
     );
     expect(visibleWidth(line)).toBe(80);
     expect(line).toContain("cost $0.1234");
+  });
+
+  it("truncates the left side of a flex layout before the right side", () => {
+    const line = renderStatusline(
+      {
+        ...plainConfig,
+        separator: "none",
+        lines: [
+          [
+            registry.createEntry("custom-text", {
+              raw: true,
+              text: "bug-new-worktree-card-style-makes-completed-but · long-feature-branch",
+            }),
+            registry.createEntry("flex-separator"),
+            registry.createEntry("custom-text", {
+              raw: true,
+              text: "opencode · muse-spark-1.3-contributor-free · xhigh",
+            }),
+          ],
+        ],
+      },
+      data,
+      80,
+    );
+
+    const plain = stripAnsi(line);
+    expect(visibleWidth(line)).toBe(80);
+    expect(plain.endsWith("opencode · muse-spark-1.3-contributor-free · xhigh")).toBe(true);
+    expect(plain).toMatch(/^bug-new-worktree.*… {4}opencode/);
+  });
+
+  it("styles a flex truncation ellipsis like the text before it", () => {
+    const line = renderStatusline(
+      {
+        ...plainConfig,
+        terminal: { ...plainConfig.terminal, colorLevel: "ansi256" },
+        separator: "none",
+        lines: [
+          [
+            registry.createEntry("custom-text", {
+              raw: true,
+              text: "long-left-side-that-needs-truncation",
+              fg: "ansi256:72",
+            }),
+            registry.createEntry("flex-separator"),
+            registry.createEntry("custom-text", { raw: true, text: "model · high" }),
+          ],
+        ],
+      },
+      data,
+      32,
+    );
+
+    expect(visibleWidth(line)).toBe(32);
+    expect(line).toContain("\x1b[38;5;72m");
+    expect(line).not.toContain("\x1b[0m…");
+    expect(line).toContain("…\x1b[0m    model · high");
+  });
+
+  it("keeps the original flex spacing when neither side needs truncation", () => {
+    const line = renderStatusline(
+      {
+        ...plainConfig,
+        separator: "none",
+        lines: [
+          [
+            registry.createEntry("custom-text", { raw: true, text: "short" }),
+            registry.createEntry("flex-separator"),
+            registry.createEntry("custom-text", { raw: true, text: "model" }),
+          ],
+        ],
+      },
+      data,
+      24,
+    );
+
+    expect(stripAnsi(line)).toBe(`short${" ".repeat(14)}model`);
+  });
+
+  it("collapses a long branch that duplicates the cwd basename", () => {
+    const locationData: StatuslineData = {
+      ...data,
+      cwd: "/tmp/bug-new-worktree-card-style-makes-completed-but",
+      git: {
+        ...data.git,
+        branch: "mmarabel/bug-new-worktree-card-style-makes-completed-but",
+      },
+    };
+    const line = renderStatusline(
+      {
+        ...plainConfig,
+        separator: "none",
+        lines: [
+          [
+            registry.createEntry("cwd-basename", { icon: "~ " }),
+            registry.createEntry("separator", { separator: "custom", text: " · " }),
+            registry.createEntry("git-branch", { icon: "git " }),
+            registry.createEntry("flex-separator"),
+            registry.createEntry("custom-text", { raw: true, text: "model · high" }),
+          ],
+        ],
+      },
+      locationData,
+      80,
+    );
+
+    const plain = stripAnsi(line);
+    expect(plain).not.toContain("mmarabel");
+    expect(plain).not.toContain("git ");
+    expect(plain).toMatch(/^~ bug-new-worktree…completed-but {4,}model · high$/);
+  });
+
+  it("independently middle-truncates distinct cwd and branch names under pressure", () => {
+    const locationData: StatuslineData = {
+      ...data,
+      cwd: "/tmp/bug-new-worktree-card-style-makes-completed-but",
+      git: {
+        ...data.git,
+        branch: "mmarabel/feature-with-a-different-and-very-long-name",
+      },
+    };
+    const line = renderStatusline(
+      {
+        ...plainConfig,
+        separator: "none",
+        lines: [
+          [
+            registry.createEntry("cwd-basename", { icon: "~ " }),
+            registry.createEntry("separator", { separator: "custom", text: " · " }),
+            registry.createEntry("git-branch", { icon: "git " }),
+            registry.createEntry("flex-separator"),
+            registry.createEntry("custom-text", { raw: true, text: "model · high" }),
+          ],
+        ],
+      },
+      locationData,
+      96,
+    );
+
+    const plain = stripAnsi(line);
+    expect(plain.split("…")).toHaveLength(3);
+    expect(plain).toContain("~ bug-new-work");
+    expect(plain).toContain("git mmarabel/feature");
+    expect(plain).toMatch(/ {4}model · high$/);
+  });
+
+  it("keeps short cwd and branch fields unchanged", () => {
+    const locationData: StatuslineData = {
+      ...data,
+      cwd: "/tmp/hetzner-vps",
+      git: { ...data.git, branch: "main" },
+    };
+    const line = renderStatusline(
+      {
+        ...plainConfig,
+        separator: "none",
+        lines: [
+          [
+            registry.createEntry("cwd-basename", { icon: "~ " }),
+            registry.createEntry("separator", { separator: "custom", text: " · " }),
+            registry.createEntry("git-branch", { icon: "git " }),
+            registry.createEntry("flex-separator"),
+            registry.createEntry("custom-text", { raw: true, text: "model · high" }),
+          ],
+        ],
+      },
+      locationData,
+      80,
+    );
+
+    const plain = stripAnsi(line);
+    expect(plain.startsWith("~ hetzner-vps · git main")).toBe(true);
+    expect(plain).not.toContain("…");
+  });
+
+  it("uses the whole width for an oversized right side of a flex layout", () => {
+    const line = renderStatusline(
+      {
+        ...plainConfig,
+        separator: "none",
+        lines: [
+          [
+            registry.createEntry("custom-text", { raw: true, text: "left" }),
+            registry.createEntry("flex-separator"),
+            registry.createEntry("custom-text", {
+              raw: true,
+              text: "model-and-thinking-that-do-not-fit",
+            }),
+          ],
+        ],
+      },
+      data,
+      12,
+    );
+
+    expect(visibleWidth(line)).toBe(12);
+    expect(stripAnsi(line)).toBe("model-and-t…");
   });
 
   it("respects width", () => {
