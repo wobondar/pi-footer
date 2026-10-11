@@ -45,6 +45,7 @@ describe("TotalSpeedWidget", () => {
       hideWhenZero: false,
       icon: "",
       tokenFormatStyle: "default",
+      speedUnit: "per-minute",
       fg: "brightGreen",
       bg: "default",
       bold: false,
@@ -55,6 +56,8 @@ describe("TotalSpeedWidget", () => {
     expect(totalSpeed().render(ctx())).toBe("tok/min 9.6k/min");
     expect(totalSpeed({ icon: "Total: " }).render(ctx())).toBe("Total: 9.6k/min");
     expect(totalSpeed({ raw: true }).render(ctx())).toBe("9.6k/min");
+    expect(totalSpeed({ speedUnit: "per-second" }).render(ctx())).toBe("tok/s 159/s");
+    expect(totalSpeed({ raw: true, speedUnit: "per-second" }).render(ctx())).toBe("159/s");
     expect(
       totalSpeed({ raw: true, tokenFormatStyle: "compact" }).render(
         ctx({ metrics: { ...TOKEN_METRICS, totalTokens: 12_345, lastTimestampMs: 60_000 } }),
@@ -98,9 +101,11 @@ describe("TotalSpeedWidget", () => {
       "hideWhenZero",
       "icon",
       "tokenFormatStyle",
+      "speedUnit",
     ]);
     expect(formatWidgetOptions(totalSpeed())).toBe("");
     expect(formatWidgetOptions(totalSpeed({ tokenFormatStyle: "compact" }))).toBe("format=Compact");
+    expect(formatWidgetOptions(totalSpeed({ speedUnit: "per-second" }))).toBe("rate=Per second");
     expect(formatWidgetOptions(totalSpeed({ hideWhenZero: true }))).toBe("hide-zero");
     expect(formatWidgetOptions(totalSpeed({ raw: true, icon: "S " }))).toBe("raw • icon='S '");
     expect(formatWidgetColorOptions(totalSpeed({ fg: "red", bold: true }))).toBe("fg=Red • bold");
@@ -131,6 +136,7 @@ describe("TotalSpeedWidget", () => {
       bg: "default",
       bold: false,
       tokenFormatStyle: "default",
+      speedUnit: "per-minute",
     });
   });
 });
