@@ -2,8 +2,8 @@ import { basename } from "node:path";
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-import { asyncCache, CACHE_NAMESPACES } from "./cache.js";
-import type { GitInfo, StatuslineConfig } from "./types.js";
+import { asyncCache, CACHE_NAMESPACES } from "./cache.ts";
+import type { GitInfo, StatuslineConfig } from "./types.ts";
 
 const CACHE_TTL_MS = 2000;
 

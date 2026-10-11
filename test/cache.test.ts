@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { AsyncCache, CACHE_NAMESPACES, asyncCache } from "../src/cache.js";
+import { AsyncCache, CACHE_NAMESPACES, asyncCache } from "../src/cache.ts";
 
 function deferred<T>(): { promise: Promise<T>; resolve: (value: T) => void } {
   let resolve!: (value: T) => void;

@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { registry } from "../../src/widgets/registry.js";
+import { registry } from "../../src/widgets/registry.ts";
 
-import { DEFAULT_CONFIG } from "../../src/config.js";
-import type { StatuslineConfig, StatuslineSettings, WidgetEntry } from "../../src/types.js";
-import { ModelWidget } from "../../src/widgets/core/model.js";
-import { GitBranchWidget } from "../../src/widgets/git/branch.js";
-import { GitDiffWidget } from "../../src/widgets/git/diff.js";
-import { WidgetInstance } from "../../src/widgets/instance.js";
-import { SpacerWidget } from "../../src/widgets/layout/spacer.js";
-import { RuntimeWidget } from "../../src/widgets/project/runtime.js";
-import { CompactionsWidget } from "../../src/widgets/session/compactions.js";
-import { WidgetStore } from "../../src/widgets/store.js";
-import { ContextBarWidget } from "../../src/widgets/tokens/context-bar.js";
-import { TokensWidget } from "../../src/widgets/tokens/tokens.js";
+import { DEFAULT_CONFIG } from "../../src/config.ts";
+import type { StatuslineConfig, StatuslineSettings, WidgetEntry } from "../../src/types.ts";
+import { ModelWidget } from "../../src/widgets/core/model.ts";
+import { GitBranchWidget } from "../../src/widgets/git/branch.ts";
+import { GitDiffWidget } from "../../src/widgets/git/diff.ts";
+import { WidgetInstance } from "../../src/widgets/instance.ts";
+import { SpacerWidget } from "../../src/widgets/layout/spacer.ts";
+import { RuntimeWidget } from "../../src/widgets/project/runtime.ts";
+import { CompactionsWidget } from "../../src/widgets/session/compactions.ts";
+import { WidgetStore } from "../../src/widgets/store.ts";
+import { ContextBarWidget } from "../../src/widgets/tokens/context-bar.ts";
+import { TokensWidget } from "../../src/widgets/tokens/tokens.ts";
 
 function runtimeEntry(): WidgetEntry {
   return {

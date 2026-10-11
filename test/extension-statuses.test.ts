@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
-import { DEFAULT_CONFIG, normalizeConfig, STATUS_KEY } from "../src/config.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
+import { DEFAULT_CONFIG, normalizeConfig, STATUS_KEY } from "../src/config.ts";
 import {
   allExtensionStatusEntries,
   EMPTY_STATUS_LABEL,
   extensionStatusEntries,
   toggleExtensionStatusRowKey,
   visibleExtensionStatusRowEntries,
-} from "../src/extension-statuses.js";
-import { cycleExternalStatusKey, statusKeyPickerLines } from "../src/ui/extension-status-picker.js";
+} from "../src/extension-statuses.ts";
+import { cycleExternalStatusKey, statusKeyPickerLines } from "../src/ui/extension-status-picker.ts";
 import {
   extensionStatusRowLines,
   toggleExtensionStatusRowSelection,
-} from "../src/ui/extension-statuses.js";
+} from "../src/ui/extension-statuses.ts";
 
 describe("extension status helpers", () => {
   it("returns sorted non-empty extension statuses except the pi-footer itself", () => {

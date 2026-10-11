@@ -8,8 +8,8 @@ import {
   deleteAnsi256Digit,
   normalizeColor,
   resetAnsi256Colors,
-} from "../src/colors.js";
-import { taggedPiTheme } from "./helpers/theme.js";
+} from "../src/colors.ts";
+import { taggedPiTheme } from "./helpers/theme.ts";
 
 describe("colors", () => {
   it("normalizes and displays standard, ansi, pi, and invalid colors", () => {

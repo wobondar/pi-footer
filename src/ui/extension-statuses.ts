@@ -1,12 +1,12 @@
 import { truncateToWidth } from "@earendil-works/pi-tui";
 
-import { STATUS_KEY } from "../config.js";
+import { STATUS_KEY } from "../config.ts";
 import {
   allExtensionStatusEntries,
   toggleExtensionStatusRowKey,
   type GetExtensionStatuses,
-} from "../extension-statuses.js";
-import type { StatuslineSettings } from "../types.js";
+} from "../extension-statuses.ts";
+import type { StatuslineSettings } from "../types.ts";
 
 export function extensionStatusRowLines(
   config: StatuslineSettings,

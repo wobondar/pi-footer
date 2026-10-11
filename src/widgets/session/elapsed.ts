@@ -1,5 +1,5 @@
-import { defineWidget } from "../types.js";
-import { formatElapsed } from "../utils/session.js";
+import { defineWidget } from "../types.ts";
+import { formatElapsed } from "../utils/session.ts";
 
 export const ElapsedWidget = defineWidget({
   type: "elapsed",

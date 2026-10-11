@@ -1,6 +1,6 @@
-import type { ColorLevel } from "../colors.js";
-import type { IconMode, TerminalWidthMode } from "../types.js";
-import type { WidgetProperty } from "../widgets/types.js";
+import type { ColorLevel } from "../colors.ts";
+import type { IconMode, TerminalWidthMode } from "../types.ts";
+import type { WidgetProperty } from "../widgets/types.ts";
 
 export const CONFIG_UI_HEIGHT_RATIO = 1;
 

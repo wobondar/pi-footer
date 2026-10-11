@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG } from "../src/config.js";
+import { DEFAULT_CONFIG } from "../src/config.ts";
 import {
   nextTerminalColorLevel,
   nextTerminalWidthMode,
@@ -8,7 +8,7 @@ import {
   TERMINAL_MENU_HINT,
   terminalMenuAction,
   terminalMenuFields,
-} from "../src/ui/terminal-menu.js";
+} from "../src/ui/terminal-menu.ts";
 
 describe("terminal menu", () => {
   it("keeps actions in field order", () => {

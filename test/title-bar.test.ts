@@ -1,8 +1,8 @@
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { describe, expect, it } from "vitest";
 
-import { configTitleBarParts, previewTitleParts, retroText } from "../src/ui/title-bar.js";
-import { stripAnsi } from "../src/colors.js";
+import { configTitleBarParts, previewTitleParts, retroText } from "../src/ui/title-bar.ts";
+import { stripAnsi } from "../src/colors.ts";
 import packageJson from "../package.json" with { type: "json" };
 
 describe("config title bar", () => {

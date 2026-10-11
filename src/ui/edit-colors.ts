@@ -1,6 +1,6 @@
-import { registry } from "../widgets/registry.js";
-import type { Widget } from "../widgets/types.js";
-import { colorFields, colorFieldValue } from "./fields.js";
+import { registry } from "../widgets/registry.ts";
+import type { Widget } from "../widgets/types.ts";
+import { colorFields, colorFieldValue } from "./fields.ts";
 
 const EDIT_COLORS_TITLE_PREFIX = "Colors /";
 

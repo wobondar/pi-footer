@@ -1,4 +1,4 @@
-import { defineWidget } from "../types.js";
+import { defineWidget } from "../types.ts";
 
 export const GitShaWidget = defineWidget({
   type: "git-sha",

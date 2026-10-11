@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import type { WidgetOptions } from "../../../src/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
 import {
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-} from "../../../src/ui/fields.js";
-import { TotalTokensWidget } from "../../../src/widgets/tokens/total-tokens.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
-import { TOKEN_METRICS } from "./fixtures.js";
+} from "../../../src/ui/fields.ts";
+import { TotalTokensWidget } from "../../../src/widgets/tokens/total-tokens.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
+import { TOKEN_METRICS } from "./fixtures.ts";
 
 function totalTokens(options: WidgetOptions = {}) {
   return registry.createWidget("total-tokens", options);

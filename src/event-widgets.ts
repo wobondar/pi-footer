@@ -1,4 +1,4 @@
-import { isRecord } from "./types.js";
+import { isRecord } from "./types.ts";
 
 export const UPDATE_EVENT_WIDGET_EVENT = "pi-footer:update-widget";
 

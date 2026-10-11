@@ -1,11 +1,11 @@
-import type { RenderStatuslineOptions } from "../render.js";
-import type { StatuslineData } from "../types.js";
+import type { RenderStatuslineOptions } from "../render.ts";
+import type { StatuslineData } from "../types.ts";
 import type {
   BaseWidgetContext,
   WidgetContext,
   WidgetDependency,
   WidgetDependencyValues,
-} from "./types.js";
+} from "./types.ts";
 
 export function contextForDependencies<const TDeps extends readonly WidgetDependency[]>(
   baseCtx: BaseWidgetContext,

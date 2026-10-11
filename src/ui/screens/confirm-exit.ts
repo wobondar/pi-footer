@@ -1,7 +1,7 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import { wrap } from "../helpers.js";
-import { Controller } from "./controller.js";
+import { wrap } from "../helpers.ts";
+import { Controller } from "./controller.ts";
 
 const ITEMS = ["Save & Exit", "Exit without saving", "Return to config UI"] as const;
 const HINT = "↑/↓ select • enter confirm • s save • x discard • esc/r back";

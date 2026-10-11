@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG } from "../src/config.js";
-import { createScreenState } from "../src/ui/screen-state.js";
-import { WidgetStore } from "../src/widgets/store.js";
+import { DEFAULT_CONFIG } from "../src/config.ts";
+import { createScreenState } from "../src/ui/screen-state.ts";
+import { WidgetStore } from "../src/widgets/store.ts";
 
 describe("ScreenState", () => {
   it("contains only shared screen state", () => {

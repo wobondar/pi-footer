@@ -1,8 +1,8 @@
-import { registry } from "../widgets/registry.js";
-import type { Widget, WidgetEditAction, WidgetProperty } from "../widgets/types.js";
-import { getBooleanField, getNumberField, getTextField } from "./fields.js";
-import { cycle } from "./helpers.js";
-import type { OptionField } from "./model.js";
+import { registry } from "../widgets/registry.ts";
+import type { Widget, WidgetEditAction, WidgetProperty } from "../widgets/types.ts";
+import { getBooleanField, getNumberField, getTextField } from "./fields.ts";
+import { cycle } from "./helpers.ts";
+import type { OptionField } from "./model.ts";
 
 type OptionFieldApplyResult = "changed" | "unchanged" | WidgetEditAction;
 

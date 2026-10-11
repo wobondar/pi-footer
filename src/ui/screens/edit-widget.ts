@@ -1,14 +1,14 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import { registry } from "../../widgets/registry.js";
-import type { Widget } from "../../widgets/types.js";
-import { eventWidgetUsageLines } from "../events.js";
-import { cycleExternalStatusKey, statusKeyPickerLines } from "../extension-status-picker.js";
-import { fieldsForWidget, fieldValue } from "../fields.js";
-import { isPrintable, wrap } from "../helpers.js";
-import type { OptionField } from "../model.js";
-import { applyOptionField, applyOptionFieldEdit } from "../option-edit.js";
-import { Controller } from "./controller.js";
+import { registry } from "../../widgets/registry.ts";
+import type { Widget } from "../../widgets/types.ts";
+import { eventWidgetUsageLines } from "../events.ts";
+import { cycleExternalStatusKey, statusKeyPickerLines } from "../extension-status-picker.ts";
+import { fieldsForWidget, fieldValue } from "../fields.ts";
+import { isPrintable, wrap } from "../helpers.ts";
+import type { OptionField } from "../model.ts";
+import { applyOptionField, applyOptionFieldEdit } from "../option-edit.ts";
+import { Controller } from "./controller.ts";
 
 const HINT = "↑/↓ field • ←/→ change • type text • backspace delete • esc back";
 

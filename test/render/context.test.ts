@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { contextForDependencies } from "../../src/widgets/context.js";
-import { registry } from "../../src/widgets/registry.js";
-import type { StatuslineData } from "../../src/types.js";
-import type { BaseWidgetContext, WidgetDependency } from "../../src/widgets/types.js";
+import { contextForDependencies } from "../../src/widgets/context.ts";
+import { registry } from "../../src/widgets/registry.ts";
+import type { StatuslineData } from "../../src/types.ts";
+import type { BaseWidgetContext, WidgetDependency } from "../../src/widgets/types.ts";
 
 const baseCtx: BaseWidgetContext = {
   iconMode: "text",

@@ -1,5 +1,5 @@
-import { createEventWidgetId } from "../../event-widgets.js";
-import { defineWidget } from "../types.js";
+import { createEventWidgetId } from "../../event-widgets.ts";
+import { defineWidget } from "../types.ts";
 
 export const EventValueWidget = defineWidget({
   type: "event",

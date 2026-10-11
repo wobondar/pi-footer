@@ -1,10 +1,10 @@
 import { execFile } from "node:child_process";
 import { readdir } from "node:fs/promises";
 
-import type { ColorName } from "../../colors.js";
-import { CACHE_NAMESPACES, asyncCache } from "../../cache.js";
-import type { WidgetIconSet } from "../types.js";
-import { defineWidget } from "../types.js";
+import type { ColorName } from "../../colors.ts";
+import { CACHE_NAMESPACES, asyncCache } from "../../cache.ts";
+import type { WidgetIconSet } from "../types.ts";
+import { defineWidget } from "../types.ts";
 
 const VERSION_TIMEOUT_MS = 1_000;
 const RUNTIME_CACHE_TTL_MS = 10_000;

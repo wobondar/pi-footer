@@ -1,20 +1,20 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import { renderStatuslines } from "../../../src/render.js";
-import { makeStatuslineData } from "../../helpers/render.js";
-import type { WidgetOptions } from "../../../src/types.js";
-import { applyOptionField } from "../../../src/ui/option-edit.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import { renderStatuslines } from "../../../src/render.ts";
+import { makeStatuslineData } from "../../helpers/render.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
+import { applyOptionField } from "../../../src/ui/option-edit.ts";
 import {
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-} from "../../../src/ui/fields.js";
-import { ExtensionStatusWidget } from "../../../src/widgets/core/external-status.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { WidgetStore } from "../../../src/widgets/store.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
+} from "../../../src/ui/fields.ts";
+import { ExtensionStatusWidget } from "../../../src/widgets/core/external-status.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { WidgetStore } from "../../../src/widgets/store.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
 
 function extensionStatus(options: WidgetOptions = {}) {
   return registry.createWidget("external-status", options);

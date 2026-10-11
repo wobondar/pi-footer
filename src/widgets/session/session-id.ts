@@ -1,4 +1,4 @@
-import { defineWidget } from "../types.js";
+import { defineWidget } from "../types.ts";
 
 export const SessionIdWidget = defineWidget({
   type: "session-id",

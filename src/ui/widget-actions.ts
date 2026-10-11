@@ -1,5 +1,5 @@
-import { registry, type WidgetType } from "../widgets/registry.js";
-import type { Widget } from "../widgets/types.js";
+import { registry, type WidgetType } from "../widgets/registry.ts";
+import type { Widget } from "../widgets/types.ts";
 
 export function addLineAfter(lines: Widget[][], selectedLine: number): number {
   lines.splice(selectedLine + 1, 0, []);

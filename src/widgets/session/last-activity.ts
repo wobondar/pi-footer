@@ -1,5 +1,5 @@
-import { defineWidget } from "../types.js";
-import { formatTime } from "../utils/session.js";
+import { defineWidget } from "../types.ts";
+import { formatTime } from "../utils/session.ts";
 
 export const LastActivityWidget = defineWidget({
   type: "last-activity",

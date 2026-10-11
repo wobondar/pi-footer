@@ -1,4 +1,4 @@
-import { defineWidget } from "../types.js";
+import { defineWidget } from "../types.ts";
 
 const GIT_BRANCH_DISPLAY_STYLES = {
   default: {

@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import { renderStatuslines } from "../../../src/render.js";
-import { makeStatuslineData } from "../../helpers/render.js";
-import type { WidgetOptions } from "../../../src/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import { renderStatuslines } from "../../../src/render.ts";
+import { makeStatuslineData } from "../../helpers/render.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
 import {
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-} from "../../../src/ui/fields.js";
-import { CwdBasenameWidget } from "../../../src/widgets/core/cwd-basename.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { WidgetStore } from "../../../src/widgets/store.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
+} from "../../../src/ui/fields.ts";
+import { CwdBasenameWidget } from "../../../src/widgets/core/cwd-basename.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { WidgetStore } from "../../../src/widgets/store.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
 
 function cwdBasename(options: WidgetOptions = {}) {
   return registry.createWidget("cwd-basename", options);
