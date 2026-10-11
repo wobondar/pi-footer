@@ -14,13 +14,13 @@
   ],
   "pi": {
     "extensions": [
-      "./src/index.ts"
+      "./dist/index.js"
     ],
     "video": "https://raw.githubusercontent.com/wobondar/pi-footer/main/assets/demo-video.mp4",
     "image": "https://raw.githubusercontent.com/wobondar/pi-footer/main/assets/demo-teaser.gif"
   },
   "files": [
-    "src/",
+    "dist/",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
@@ -47,7 +47,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "coverage": "vitest run --coverage",
-    "prepublishOnly": "npm run typecheck && npm run fmt:check && npm run lint && npm run test"
+    "prepublishOnly": "npm run build && npm run typecheck && npm run fmt:check && npm run lint && npm run test",
+    "build": "tsc -p tsconfig.build.json"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*",
