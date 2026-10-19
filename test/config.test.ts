@@ -55,6 +55,19 @@ describe("config", () => {
     expect(normalizeConfig({ iconMode: "nonsense" }).iconMode).toBe(DEFAULT_CONFIG.iconMode);
   });
 
+  it("normalizes the git refresh interval", () => {
+    expect(normalizeConfig({}).gitRefreshIntervalMs).toBe(30_000);
+    expect(normalizeConfig({ gitRefreshIntervalMs: 60_000 }).gitRefreshIntervalMs).toBe(60_000);
+    expect(normalizeConfig({ gitRefreshIntervalMs: 1500.4 }).gitRefreshIntervalMs).toBe(1500);
+    expect(normalizeConfig({ gitRefreshIntervalMs: 0 }).gitRefreshIntervalMs).toBe(1000);
+    expect(normalizeConfig({ gitRefreshIntervalMs: -5 }).gitRefreshIntervalMs).toBe(1000);
+    expect(normalizeConfig({ gitRefreshIntervalMs: "60000" }).gitRefreshIntervalMs).toBe(30_000);
+    expect(normalizeConfig({ gitRefreshIntervalMs: Number.NaN }).gitRefreshIntervalMs).toBe(30_000);
+    expect(
+      normalizeConfig({ gitRefreshIntervalMs: Number.POSITIVE_INFINITY }).gitRefreshIntervalMs,
+    ).toBe(30_000);
+  });
+
   it("applies presets", () => {
     const config = configWithPreset(DEFAULT_CONFIG, "compact");
     expect(config.lines[0]?.map((widget) => widget.type)).toEqual([

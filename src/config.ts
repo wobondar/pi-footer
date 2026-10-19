@@ -10,6 +10,7 @@ import {
   DEFAULT_EXTENSION_STATUS_ROW,
   normalizeExtensionStatusRow,
 } from "./extension-statuses.js";
+import { DEFAULT_GIT_REFRESH_INTERVAL_MS, MIN_GIT_REFRESH_INTERVAL_MS } from "./git.js";
 import {
   PRESET_DEFINITIONS,
   type Preset,
@@ -49,6 +50,7 @@ export const DEFAULT_CONFIG: StatuslineConfig = {
   separatorBg: "default",
   iconMode: "emoji",
   minimalist: false,
+  gitRefreshIntervalMs: DEFAULT_GIT_REFRESH_INTERVAL_MS,
   terminal: DEFAULT_TERMINAL_OPTIONS,
   extensionStatusRow: DEFAULT_EXTENSION_STATUS_ROW,
 };
@@ -96,6 +98,7 @@ export function normalizeConfig(input: unknown): StatuslineConfig {
     iconMode: isIconMode(input.iconMode) ? input.iconMode : DEFAULT_CONFIG.iconMode,
     minimalist:
       typeof input.minimalist === "boolean" ? input.minimalist : DEFAULT_CONFIG.minimalist,
+    gitRefreshIntervalMs: normalizeGitRefreshInterval(input.gitRefreshIntervalMs),
     terminal: normalizeTerminalOptions(input.terminal, PRESET_DEFINITIONS[preset].terminal),
     extensionStatusRow: normalizeExtensionStatusRow(input.extensionStatusRow),
   };
@@ -187,6 +190,13 @@ function normalizeTerminalOptions(
 
 export function isPreset(value: unknown): value is Preset {
   return typeof value === "string" && Object.hasOwn(PRESET_DEFINITIONS, value);
+}
+
+function normalizeGitRefreshInterval(value: unknown): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    return DEFAULT_CONFIG.gitRefreshIntervalMs;
+  }
+  return Math.max(MIN_GIT_REFRESH_INTERVAL_MS, Math.round(value));
 }
 
 function isSeparatorStyle(value: unknown): value is SeparatorStyle {
