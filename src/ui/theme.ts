@@ -1,6 +1,6 @@
 import type { Theme, ThemeColor } from "@earendil-works/pi-coding-agent";
 
-import type { ConfigState } from "./config-lifecycle.js";
+import type { ConfigState } from "./config-lifecycle.ts";
 
 export type ThemeProvider = () => Theme;
 

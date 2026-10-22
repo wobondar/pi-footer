@@ -1,8 +1,8 @@
-import type { GetExtensionStatuses } from "../extension-statuses.js";
-import type { Widget } from "../widgets/types.js";
-import type { ScreenView } from "./model.js";
-import type { ScreenState } from "./screen-state.js";
-import type { UiTheme } from "./theme.js";
+import type { GetExtensionStatuses } from "../extension-statuses.ts";
+import type { Widget } from "../widgets/types.ts";
+import type { ScreenView } from "./model.ts";
+import type { ScreenState } from "./screen-state.ts";
+import type { UiTheme } from "./theme.ts";
 
 export interface ScreenContext {
   state: ScreenState;

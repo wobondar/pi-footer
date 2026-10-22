@@ -1,6 +1,6 @@
 import { basename } from "node:path";
 
-import { defineWidget } from "../types.js";
+import { defineWidget } from "../types.ts";
 
 export const CwdBasenameWidget = defineWidget({
   type: "cwd-basename",

@@ -1,4 +1,4 @@
-import { isRecord, type SessionMetrics, type TurnMetrics } from "./types.js";
+import { isRecord, type SessionMetrics, type TurnMetrics } from "./types.ts";
 
 // Intentionally loose structural projection of the `usage` field on a pi session message entry.
 // Fields stay `unknown` and are validated at runtime (see isRecord usage below) rather than being

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
 import {
   colorFieldValue,
   colorFields,
@@ -10,10 +10,10 @@ import {
   formatWidgetOptions,
   getTextField,
   isMetadataPropertyVisible,
-} from "../src/ui/fields.js";
-import type { ColorOptionField, OptionField } from "../src/ui/model.js";
-import { registry } from "../src/widgets/registry.js";
-import type { WidgetProperty } from "../src/widgets/types.js";
+} from "../src/ui/fields.ts";
+import type { ColorOptionField, OptionField } from "../src/ui/model.ts";
+import { registry } from "../src/widgets/registry.ts";
+import type { WidgetProperty } from "../src/widgets/types.ts";
 
 const optionField = (id: string, kind: OptionField["kind"] = "text"): OptionField => ({
   id,

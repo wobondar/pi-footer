@@ -4,10 +4,10 @@ import {
   extensionStatusRowCount,
   extensionStatusRowLines,
   toggleExtensionStatusRowSelection,
-} from "../extension-statuses.js";
-import { wrap } from "../helpers.js";
-import { pageSelection } from "../navigation.js";
-import { Controller } from "./controller.js";
+} from "../extension-statuses.ts";
+import { wrap } from "../helpers.ts";
+import { pageSelection } from "../navigation.ts";
+import { Controller } from "./controller.ts";
 
 export class ExtensionStatusRowScreen extends Controller {
   private selected = 0;

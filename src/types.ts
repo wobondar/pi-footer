@@ -1,8 +1,8 @@
-import type { ColorLevel, ColorName } from "./colors.js";
-import type { ExtensionStatusRowConfig } from "./extension-statuses.js";
-import type { Preset } from "./presets.js";
-import type { SeparatorStyle } from "./separators.js";
-import type { WidgetType } from "./widgets/registry.js";
+import type { ColorLevel, ColorName } from "./colors.ts";
+import type { ExtensionStatusRowConfig } from "./extension-statuses.ts";
+import type { Preset } from "./presets.ts";
+import type { SeparatorStyle } from "./separators.ts";
+import type { WidgetType } from "./widgets/registry.ts";
 
 export interface WidgetEntry {
   id: string;

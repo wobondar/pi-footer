@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { separatorText, widgetSeparatorText } from "../src/separators.js";
+import { separatorText, widgetSeparatorText } from "../src/separators.ts";
 
 describe("separators", () => {
   it("formats global separator styles", () => {

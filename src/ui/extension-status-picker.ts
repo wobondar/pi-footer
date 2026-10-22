@@ -1,12 +1,12 @@
 import { truncateToWidth } from "@earendil-works/pi-tui";
 
-import { STATUS_KEY } from "../config.js";
+import { STATUS_KEY } from "../config.ts";
 import {
   allExtensionStatusEntries,
   type ExtensionStatusRowConfig,
   type GetExtensionStatuses,
-} from "../extension-statuses.js";
-import type { Widget } from "../widgets/types.js";
+} from "../extension-statuses.ts";
+import type { Widget } from "../widgets/types.ts";
 
 export function statusKeyPickerLines(
   getExtensionStatuses: GetExtensionStatuses,

@@ -1,5 +1,5 @@
-import type { ColorLevel } from "../colors.js";
-import { COLOR_LEVEL_LABELS } from "./model.js";
+import type { ColorLevel } from "../colors.ts";
+import { COLOR_LEVEL_LABELS } from "./model.ts";
 
 type ColorLevelConfirmAction = "confirm" | "cancel";
 

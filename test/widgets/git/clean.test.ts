@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import type { WidgetOptions } from "../../../src/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
 import {
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-} from "../../../src/ui/fields.js";
-import { GitCleanStatusWidget } from "../../../src/widgets/git/clean.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
-import { GIT_INFO } from "./fixtures.js";
+} from "../../../src/ui/fields.ts";
+import { GitCleanStatusWidget } from "../../../src/widgets/git/clean.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
+import { GIT_INFO } from "./fixtures.ts";
 
 const git = { ...GIT_INFO, staged: 0, unstaged: 0, untracked: 0 };
 

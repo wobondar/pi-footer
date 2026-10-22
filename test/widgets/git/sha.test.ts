@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import type { WidgetOptions } from "../../../src/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
 import {
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-} from "../../../src/ui/fields.js";
-import { GitShaWidget } from "../../../src/widgets/git/sha.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { WidgetStore } from "../../../src/widgets/store.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
-import { GIT_INFO as git } from "./fixtures.js";
+} from "../../../src/ui/fields.ts";
+import { GitShaWidget } from "../../../src/widgets/git/sha.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { WidgetStore } from "../../../src/widgets/store.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
+import { GIT_INFO as git } from "./fixtures.ts";
 
 function gitSha(options: WidgetOptions = {}) {
   return registry.createWidget("git-sha", options);

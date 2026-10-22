@@ -1,5 +1,5 @@
-import { defineWidget } from "../types.js";
-import { formatTokenSpeed, tokenFormatStyleProperty } from "../utils/token-format.js";
+import { defineWidget } from "../types.ts";
+import { formatTokenSpeed, tokenFormatStyleProperty } from "../utils/token-format.ts";
 
 export const OutputSpeedWidget = defineWidget({
   type: "output-speed",

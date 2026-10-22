@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import { colorFields, fieldsForWidget, formatWidgetOptions } from "../../../src/ui/fields.js";
-import type { WidgetOptions } from "../../../src/types.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { ContextBarWidget } from "../../../src/widgets/tokens/context-bar.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import { colorFields, fieldsForWidget, formatWidgetOptions } from "../../../src/ui/fields.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { ContextBarWidget } from "../../../src/widgets/tokens/context-bar.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
 
 function contextBar(options: WidgetOptions = {}) {
   return registry.createWidget("context-bar", options);

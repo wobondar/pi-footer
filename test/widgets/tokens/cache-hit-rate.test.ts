@@ -1,17 +1,17 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import type { WidgetOptions } from "../../../src/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
 import {
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-} from "../../../src/ui/fields.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { CacheHitRateWidget } from "../../../src/widgets/tokens/cache-hit-rate.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
-import { TOKEN_METRICS, TURN_METRICS } from "./fixtures.js";
+} from "../../../src/ui/fields.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { CacheHitRateWidget } from "../../../src/widgets/tokens/cache-hit-rate.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
+import { TOKEN_METRICS, TURN_METRICS } from "./fixtures.ts";
 
 function cacheHitRate(options: WidgetOptions = {}) {
   return registry.createWidget("cache-hit-rate", options);

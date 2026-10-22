@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
 import {
   applyColorDigit,
   applyColorOptionField,
@@ -8,8 +8,8 @@ import {
   EDIT_COLORS_HINT,
   hasCustomAnsiColors,
   resetCustomAnsiColors,
-} from "../src/ui/color-options.js";
-import type { ColorOptionField } from "../src/ui/model.js";
+} from "../src/ui/color-options.ts";
+import type { ColorOptionField } from "../src/ui/model.ts";
 
 const field = (id: ColorOptionField["id"]): ColorOptionField => ({ id, label: id, kind: "color" });
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
-import { editColorsFieldRows, editColorsTitle } from "../src/ui/edit-colors.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
+import { editColorsFieldRows, editColorsTitle } from "../src/ui/edit-colors.ts";
 
 describe("edit colors UI", () => {
   it("formats title", () => {
