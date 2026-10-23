@@ -42,12 +42,46 @@ export function formatTokenCount(value: number, style: TokenFormatStyle) {
   return TOKEN_FORMAT_STYLES[style].format(value);
 }
 
+const SPEED_UNITS = {
+  "per-minute": {
+    label: "Per minute",
+    list: "Per minute",
+    suffix: "/min",
+    perMs: 60_000,
+  },
+  "per-second": {
+    label: "Per second",
+    list: "Per second",
+    suffix: "/s",
+    perMs: 1_000,
+  },
+} as const;
+
+export type SpeedUnit = keyof typeof SPEED_UNITS;
+
+const SPEED_UNIT_VALUES = Object.keys(SPEED_UNITS) as SpeedUnit[];
+
+const SPEED_UNIT_CHOICES = SPEED_UNIT_VALUES.map((unit) => ({
+  id: unit,
+  label: SPEED_UNITS[unit].label,
+  list: SPEED_UNITS[unit].list,
+}));
+
+// Never divide by less than one second of span so a single early sample cannot inflate the rate.
+const MIN_SPAN_MS = 1_000;
+
+export function speedUnitSuffix(speedUnit: SpeedUnit) {
+  return SPEED_UNITS[speedUnit].suffix;
+}
+
 export function formatTokenSpeed(
   tokens: number,
   first: number | undefined,
   last: number | undefined,
   tokenFormatStyle: TokenFormatStyle,
+  speedUnit: SpeedUnit = "per-minute",
 ) {
+  const unit = SPEED_UNITS[speedUnit];
   if (
     first === undefined ||
     last === undefined ||
@@ -55,10 +89,27 @@ export function formatTokenSpeed(
     !Number.isFinite(last) ||
     last <= first
   ) {
-    return "0/min";
+    return `0${unit.suffix}`;
   }
-  const minutes = Math.max((last - first) / 60000, 1 / 60);
-  return `${formatTokenCount(Math.round(tokens / minutes), tokenFormatStyle)}/min`;
+  const spanMs = Math.max(last - first, MIN_SPAN_MS);
+  const rate = Math.round((tokens * unit.perMs) / spanMs);
+  return `${formatTokenCount(rate, tokenFormatStyle)}${unit.suffix}`;
+}
+
+export function speedUnitProperty() {
+  return {
+    id: "speedUnit",
+    label: "Speed unit",
+    kind: "choice",
+    description: "Rate window used for token speed",
+    default: "per-minute",
+    options: {
+      choices: SPEED_UNIT_CHOICES,
+      showInWidgets: true,
+      showInColors: false,
+      listProperty: "rate",
+    },
+  } as const;
 }
 
 export function tokenFormatStyleProperty() {
