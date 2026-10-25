@@ -1,13 +1,13 @@
 import type { ExtensionCommandContext } from "@earendil-works/pi-coding-agent";
 
-import { cloneConfig } from "./config.js";
-import type { GetExtensionStatuses } from "./extension-statuses.js";
-import type { StatuslineConfig, StatuslineData } from "./types.js";
-import { type ConfigChange, type ConfigSave, type ConfigUiResult } from "./ui/config-lifecycle.js";
-import { CONFIG_UI_HEIGHT_RATIO } from "./ui/model.js";
-import { StatuslineConfigScreen } from "./ui/screen.js";
+import { cloneConfig } from "./config.ts";
+import type { GetExtensionStatuses } from "./extension-statuses.ts";
+import type { StatuslineConfig, StatuslineData } from "./types.ts";
+import { type ConfigChange, type ConfigSave, type ConfigUiResult } from "./ui/config-lifecycle.ts";
+import { CONFIG_UI_HEIGHT_RATIO } from "./ui/model.ts";
+import { StatuslineConfigScreen } from "./ui/screen.ts";
 
-export { StatuslineConfigScreen } from "./ui/screen.js";
+export { StatuslineConfigScreen } from "./ui/screen.ts";
 
 export async function openStatuslineConfigUi(
   ctx: ExtensionCommandContext,

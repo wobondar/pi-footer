@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { registry } from "../src/widgets/registry.js";
+import { registry } from "../src/widgets/registry.ts";
 
 import {
   activeLineCount,
   CONFIG_UI_RESERVED_ROWS,
   MIN_VISIBLE_ROW_COUNT,
   visibleRowCount,
-} from "../src/ui/layout.js";
+} from "../src/ui/layout.ts";
 
 describe("config UI layout", () => {
   it("counts non-empty status lines", () => {

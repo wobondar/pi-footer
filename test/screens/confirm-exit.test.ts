@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { ConfirmExitScreen } from "../../src/ui/screens/confirm-exit.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+import { ConfirmExitScreen } from "../../src/ui/screens/confirm-exit.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("ConfirmExitScreen", () => {
   it("returns, saves, and discards", () => {

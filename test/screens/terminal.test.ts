@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { registry } from "../../src/widgets/registry.js";
+import { registry } from "../../src/widgets/registry.ts";
 
-import { DEFAULT_CONFIG } from "../../src/config.js";
+import { DEFAULT_CONFIG } from "../../src/config.ts";
 import {
   ColorLevelConfirmScreen,
   TerminalScreen,
   TerminalState,
-} from "../../src/ui/screens/terminal.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+} from "../../src/ui/screens/terminal.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("TerminalScreen", () => {
   it("renders and changes width/color options directly", () => {

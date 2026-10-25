@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { MainScreen } from "../../src/ui/screens/main.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+import { MainScreen } from "../../src/ui/screens/main.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("MainScreen", () => {
   it("renders and applies selected view actions", () => {

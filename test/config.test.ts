@@ -1,5 +1,5 @@
 import { mkdtemp, readFile, rm } from "node:fs/promises";
-import { registry } from "../src/widgets/registry.js";
+import { registry } from "../src/widgets/registry.ts";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -13,7 +13,7 @@ import {
   loadConfig,
   normalizeConfig,
   saveConfig,
-} from "../src/config.js";
+} from "../src/config.ts";
 
 let tempDir: string | undefined;
 const originalConfigEnv = process.env.PI_FOOTER_CONFIG;

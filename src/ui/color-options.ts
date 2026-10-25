@@ -5,11 +5,11 @@ import {
   normalizeColor,
   resetAnsi256Colors,
   STANDARD_COLORS,
-} from "../colors.js";
-import type { WidgetOptions } from "../types.js";
-import type { Widget } from "../widgets/types.js";
-import { adjustAnsi, cycle } from "./helpers.js";
-import type { ColorOptionField } from "./model.js";
+} from "../colors.ts";
+import type { WidgetOptions } from "../types.ts";
+import type { Widget } from "../widgets/types.ts";
+import { adjustAnsi, cycle } from "./helpers.ts";
+import type { ColorOptionField } from "./model.ts";
 
 export const EDIT_COLORS_HINT =
   "↑/↓ field • ←/→ cycle/change • enter toggle • type digits for ANSI256 • backspace delete • esc back";

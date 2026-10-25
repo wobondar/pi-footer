@@ -1,5 +1,5 @@
-import { defineWidget } from "../types.js";
-import { formatTokenCount, tokenFormatStyleProperty } from "../utils/token-format.js";
+import { defineWidget } from "../types.ts";
+import { formatTokenCount, tokenFormatStyleProperty } from "../utils/token-format.ts";
 
 export const CacheReadWidget = defineWidget({
   type: "cache-read",

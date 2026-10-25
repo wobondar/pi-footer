@@ -1,14 +1,14 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 
-import type { ColorLevel } from "../colors.js";
-import type { GetExtensionStatuses } from "../extension-statuses.js";
+import type { ColorLevel } from "../colors.ts";
+import type { GetExtensionStatuses } from "../extension-statuses.ts";
 import type {
   IconMode,
   StatuslineData,
   WidgetEntry,
   WidgetOptions,
   WidgetStyle,
-} from "../types.js";
+} from "../types.ts";
 
 export interface WidgetIconSet {
   emoji: string;

@@ -1,14 +1,14 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
-import { applyColors } from "./colors.js";
-import type { GetExtensionStatuses } from "./extension-statuses.js";
-import { separatorText } from "./separators.js";
-import type { StatuslineData, StatuslineSettings } from "./types.js";
-import { contextForDependencies } from "./widgets/context.js";
-import { registry } from "./widgets/registry.js";
-import type { WidgetStore } from "./widgets/store.js";
-import type { BaseWidgetContext, Widget } from "./widgets/types.js";
+import { applyColors } from "./colors.ts";
+import type { GetExtensionStatuses } from "./extension-statuses.ts";
+import { separatorText } from "./separators.ts";
+import type { StatuslineData, StatuslineSettings } from "./types.ts";
+import { contextForDependencies } from "./widgets/context.ts";
+import { registry } from "./widgets/registry.ts";
+import type { WidgetStore } from "./widgets/store.ts";
+import type { BaseWidgetContext, Widget } from "./widgets/types.ts";
 
 export interface RenderStatuslineOptions {
   getExtensionStatuses?: GetExtensionStatuses;

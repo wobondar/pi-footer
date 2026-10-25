@@ -1,8 +1,8 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { asyncCache } from "../src/cache.js";
-import { EMPTY_GIT_INFO, getGitInfo, loadGitInfo } from "../src/git.js";
+import { asyncCache } from "../src/cache.ts";
+import { EMPTY_GIT_INFO, getGitInfo, loadGitInfo } from "../src/git.ts";
 
 type ExecResult = { stdout: string; stderr: string; code: number; killed: boolean };
 type ExecMock = (command: string, args: string[], options?: unknown) => Promise<ExecResult>;

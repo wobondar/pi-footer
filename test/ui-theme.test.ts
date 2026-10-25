@@ -1,7 +1,7 @@
 import type { Theme } from "@earendil-works/pi-coding-agent";
 import { describe, expect, it } from "vitest";
 
-import { createUiTheme } from "../src/ui/theme.js";
+import { createUiTheme } from "../src/ui/theme.ts";
 
 function taggedTheme(name: string): Theme {
   return {

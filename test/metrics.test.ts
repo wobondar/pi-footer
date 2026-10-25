@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { collectSessionMetrics, collectTurnMetrics } from "../src/metrics.js";
+import { collectSessionMetrics, collectTurnMetrics } from "../src/metrics.ts";
 
 describe("collectSessionMetrics", () => {
   it("collects message counts, usage, cost, and timestamps", () => {

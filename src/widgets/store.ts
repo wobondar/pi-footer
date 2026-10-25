@@ -1,7 +1,7 @@
-import { cloneSettings } from "../config.js";
-import type { StatuslineConfig, StatuslineSettings } from "../types.js";
-import { registry } from "./registry.js";
-import type { Widget } from "./types.js";
+import { cloneSettings } from "../config.ts";
+import type { StatuslineConfig, StatuslineSettings } from "../types.ts";
+import { registry } from "./registry.ts";
+import type { Widget } from "./types.ts";
 
 export class WidgetStore {
   constructor(

@@ -1,6 +1,6 @@
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
-import type { UiTheme } from "./theme.js";
+import type { UiTheme } from "./theme.ts";
 
 export class ScreenRender {
   constructor(private readonly theme: UiTheme) {}

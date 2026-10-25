@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
-import { applyOptionField } from "../src/ui/option-edit.js";
-import type { OptionField } from "../src/ui/model.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
+import { applyOptionField } from "../src/ui/option-edit.ts";
+import type { OptionField } from "../src/ui/model.ts";
 
 const field = (id: OptionField["id"], kind: OptionField["kind"], extra = {}): OptionField => ({
   id,

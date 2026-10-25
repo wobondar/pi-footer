@@ -1,14 +1,14 @@
-import { registry } from "../src/widgets/registry.js";
+import { registry } from "../src/widgets/registry.ts";
 import { describe, expect, it, vi } from "vitest";
 
-import { DEFAULT_CONFIG } from "../src/config.js";
-import { OverlayRender } from "../src/ui/overlay-render.js";
-import { ScreenRender } from "../src/ui/screen-render.js";
-import { WidgetStore } from "../src/widgets/store.js";
-import { stripAnsi } from "../src/colors.js";
-import { makeStatuslineData } from "./helpers/render.js";
-import { testTheme } from "./helpers/screen.js";
-import { identityPiTheme } from "./helpers/theme.js";
+import { DEFAULT_CONFIG } from "../src/config.ts";
+import { OverlayRender } from "../src/ui/overlay-render.ts";
+import { ScreenRender } from "../src/ui/screen-render.ts";
+import { WidgetStore } from "../src/widgets/store.ts";
+import { stripAnsi } from "../src/colors.ts";
+import { makeStatuslineData } from "./helpers/render.ts";
+import { testTheme } from "./helpers/screen.ts";
+import { identityPiTheme } from "./helpers/theme.ts";
 
 function previewStore(): WidgetStore {
   return WidgetStore.fromConfig({ ...DEFAULT_CONFIG, lines: [[registry.createEntry("model")]] });
