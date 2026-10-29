@@ -5,7 +5,11 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { asyncCache, CACHE_NAMESPACES } from "./cache.js";
 import type { GitInfo, StatuslineConfig } from "./types.js";
 
-const CACHE_TTL_MS = 2000;
+// How long git info stays fresh. Each refresh runs up to 7 git subprocesses, so a short interval
+// adds steady load even when the session is idle. Branch switches still show at once: the branch
+// hint from pi is part of the cache key.
+export const DEFAULT_GIT_REFRESH_INTERVAL_MS = 30_000;
+export const MIN_GIT_REFRESH_INTERVAL_MS = 1000;
 
 export const EMPTY_GIT_INFO: GitInfo = {
   branch: null,
@@ -36,12 +40,13 @@ export function getGitInfo(
   cwd: string,
   branchHint: string | null,
   requestRender: () => void,
+  refreshIntervalMs = DEFAULT_GIT_REFRESH_INTERVAL_MS,
 ): GitInfo {
   return (
     asyncCache.get(
       CACHE_NAMESPACES.git,
       `${cwd}:${branchHint ?? ""}`,
-      CACHE_TTL_MS,
+      refreshIntervalMs,
       { pi, cwd, branchHint },
       fetchGitInfo,
       requestRender,
