@@ -14,6 +14,7 @@ import {
   saveConfig,
   STATUS_KEY,
 } from "./config.js";
+import { asyncCache, CACHE_NAMESPACES } from "./cache.js";
 import { EventWidgetValues, UPDATE_EVENT_WIDGET_EVENT } from "./event-widgets.js";
 import {
   EMPTY_EXTENSION_STATUSES,
@@ -50,7 +51,10 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
     ctx.ui.setFooter((tui, theme, footerData) => {
       getExtensionStatuses = () => footerData.getExtensionStatuses();
       renderCurrentFooter = () => tui.requestRender();
-      const unsubscribeBranch = footerData.onBranchChange(() => tui.requestRender());
+      const unsubscribeBranch = footerData.onBranchChange(() => {
+        asyncCache.invalidate(CACHE_NAMESPACES.git);
+        tui.requestRender();
+      });
       return {
         dispose(): void {
           unsubscribeBranch();
@@ -167,6 +171,13 @@ export default async function statuslineExtension(pi: ExtensionAPI): Promise<voi
     apply(ctx);
   });
 
+  // Git info is cached for gitRefreshIntervalMs. Refetch once when a run ends so edits and
+  // commits made by the agent show at once instead of after the interval.
+  pi.on("agent_end", () => {
+    asyncCache.invalidate(CACHE_NAMESPACES.git);
+    renderCurrentFooter?.();
+  });
+
   pi.on("session_shutdown", (_event, ctx) => {
     ctx.ui.setFooter(undefined);
     ctx.ui.setStatus(STATUS_KEY, undefined);
@@ -199,7 +210,13 @@ function collectStatuslineData(
     git:
       options.git ??
       (collectGit
-        ? getGitInfo(pi, ctx.cwd, footerData.getGitBranch(), options.requestRender ?? (() => {}))
+        ? getGitInfo(
+            pi,
+            ctx.cwd,
+            footerData.getGitBranch(),
+            options.requestRender ?? (() => {}),
+            options.config?.gitRefreshIntervalMs,
+          )
         : EMPTY_GIT_INFO),
     cwd: ctx.cwd,
     activeToolCount: pi.getActiveTools().length,

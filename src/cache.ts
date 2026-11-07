@@ -5,6 +5,8 @@ interface CacheEntry<V> {
   value: V | null;
   updatedAt: number | null;
   pending: Promise<void> | null;
+  // Bumped by invalidate(); a refresh that started before the bump must not mark the entry fresh.
+  generation: number;
   listeners: Set<() => void>;
 }
 
@@ -40,6 +42,16 @@ export class AsyncCache {
     this.entries.clear();
   }
 
+  // Keep cached values for display, but force the next get() in the namespace to refetch.
+  invalidate(ns: CacheNamespace): void {
+    const prefix = `${ns}:`;
+    for (const [key, entry] of this.entries) {
+      if (!key.startsWith(prefix)) continue;
+      entry.updatedAt = null;
+      entry.generation += 1;
+    }
+  }
+
   private entryFor<V>(cacheKey: string): CacheEntry<V> {
     const cached = this.entries.get(cacheKey);
     if (cached) return cached as CacheEntry<V>;
@@ -48,6 +60,7 @@ export class AsyncCache {
       value: null,
       updatedAt: null,
       pending: null,
+      generation: 0,
       listeners: new Set(),
     };
     this.entries.set(cacheKey, entry as CacheEntry<unknown>);
@@ -68,12 +81,13 @@ export class AsyncCache {
     filter: F,
     fetcher: (filter: F) => Promise<V | null>,
   ): Promise<void> {
+    const generation = entry.generation;
     try {
       entry.value = await fetcher(filter);
     } catch {
       entry.value = null;
     } finally {
-      entry.updatedAt = this.now();
+      entry.updatedAt = entry.generation === generation ? this.now() : null;
       entry.pending = null;
       this.notify(entry);
     }

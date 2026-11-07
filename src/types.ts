@@ -48,6 +48,7 @@ export interface StatuslineSettings {
   separatorBg: ColorName;
   iconMode: IconMode;
   minimalist: boolean;
+  gitRefreshIntervalMs: number;
   terminal: TerminalOptions;
   extensionStatusRow: ExtensionStatusRowConfig;
 }

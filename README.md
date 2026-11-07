@@ -232,6 +232,14 @@ The **Value example** column shows the widget value before labels/icons and colo
 | `Git Ahead/Behind` | Ahead/behind counts relative to upstream. | Hide when empty. | `↑1 ↓0` |
 | `Git Remote` | `origin` remote URL. | Hide when empty. | `git@github.com:user/repo.git` |
 
+Git widgets share one cached snapshot. It refreshes at most every `gitRefreshIntervalMs` milliseconds (default `30000`, minimum `1000`), and at once when an agent run ends or the branch changes. Each refresh runs several `git` commands, so a longer interval means less background load. Changes made outside pi can take up to the interval to show.
+
+The interval is set in the JSON config file only. `/footer reset` restores the default.
+
+```json
+{ "gitRefreshIntervalMs": 60000 }
+```
+
 ### Custom and layout widgets
 
 | Widget | Shows | Widget-specific options | Value example |
