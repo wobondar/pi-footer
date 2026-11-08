@@ -1,6 +1,6 @@
-import type { ScreenContext } from "./screen-context.js";
-import type { ScreenView } from "./model.js";
-import type { Controller } from "./screens/controller.js";
+import type { ScreenContext } from "./screen-context.ts";
+import type { ScreenView } from "./model.ts";
+import type { Controller } from "./screens/controller.ts";
 
 export class ScreenController {
   private readonly screens = new Map<ScreenView, Controller>();

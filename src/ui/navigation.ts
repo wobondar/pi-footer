@@ -1,4 +1,4 @@
-import { clamp } from "./helpers.js";
+import { clamp } from "./helpers.ts";
 
 export function pageSelection(
   selected: number,

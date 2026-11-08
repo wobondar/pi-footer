@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
 import {
   addLineAfter,
   cloneLineAfter,
@@ -11,7 +11,7 @@ import {
   moveWidget,
   toggleWidgetEnabled,
   toggleWidgetRaw,
-} from "../src/ui/widget-actions.js";
+} from "../src/ui/widget-actions.ts";
 
 describe("widget actions", () => {
   it("adds, clones, and deletes lines", () => {

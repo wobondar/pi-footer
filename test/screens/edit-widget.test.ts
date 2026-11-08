@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { registry } from "../../src/widgets/registry.js";
+import { registry } from "../../src/widgets/registry.ts";
 
-import { DEFAULT_CONFIG } from "../../src/config.js";
-import { EditWidgetScreen } from "../../src/ui/screens/edit-widget.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+import { DEFAULT_CONFIG } from "../../src/config.ts";
+import { EditWidgetScreen } from "../../src/ui/screens/edit-widget.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("EditWidgetScreen", () => {
   it("renders empty state without a selected widget", () => {

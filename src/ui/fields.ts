@@ -1,8 +1,8 @@
-import { colorDisplayName, normalizeColor } from "../colors.js";
-import type { WidgetOptions } from "../types.js";
-import { registry } from "../widgets/registry.js";
-import type { Widget, WidgetProperty } from "../widgets/types.js";
-import type { ColorOptionField, OptionField } from "./model.js";
+import { colorDisplayName, normalizeColor } from "../colors.ts";
+import type { WidgetOptions } from "../types.ts";
+import { registry } from "../widgets/registry.ts";
+import type { Widget, WidgetProperty } from "../widgets/types.ts";
+import type { ColorOptionField, OptionField } from "./model.ts";
 
 export function fieldsForWidget(widget: Widget): OptionField[] {
   const spec = registry.spec(widget.type);

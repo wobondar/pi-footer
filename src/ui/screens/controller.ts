@@ -1,5 +1,5 @@
-import type { ScreenContext } from "../screen-context.js";
-import type { ScreenRender } from "../screen-render.js";
+import type { ScreenContext } from "../screen-context.ts";
+import type { ScreenRender } from "../screen-render.ts";
 
 export abstract class Controller {
   constructor(

@@ -1,7 +1,7 @@
 import { highlightCode } from "@earendil-works/pi-coding-agent";
 
-import { UPDATE_EVENT_WIDGET_EVENT } from "../event-widgets.js";
-import type { Widget } from "../widgets/types.js";
+import { UPDATE_EVENT_WIDGET_EVENT } from "../event-widgets.ts";
+import type { Widget } from "../widgets/types.ts";
 
 export function eventWidgetUsageLines(
   widget: Widget,

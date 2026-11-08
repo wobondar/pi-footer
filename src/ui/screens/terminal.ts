@@ -1,16 +1,16 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import type { ColorLevel } from "../../colors.js";
+import type { ColorLevel } from "../../colors.ts";
 import {
   COLOR_LEVEL_CONFIRM_HINT,
   COLOR_LEVEL_CONFIRM_WARNING,
   colorLevelConfirmAction,
   colorLevelConfirmValueLabel,
-} from "../color-level-confirm.js";
-import { hasCustomAnsiColors, resetCustomAnsiColors } from "../color-options.js";
-import { wrap } from "../helpers.js";
-import type { ScreenContext } from "../screen-context.js";
-import type { ScreenRender } from "../screen-render.js";
+} from "../color-level-confirm.ts";
+import { hasCustomAnsiColors, resetCustomAnsiColors } from "../color-options.ts";
+import { wrap } from "../helpers.ts";
+import type { ScreenContext } from "../screen-context.ts";
+import type { ScreenRender } from "../screen-render.ts";
 import {
   nextTerminalColorLevel,
   nextTerminalWidthMode,
@@ -18,8 +18,8 @@ import {
   TERMINAL_MENU_HINT,
   terminalMenuAction,
   terminalMenuFields,
-} from "../terminal-menu.js";
-import { Controller } from "./controller.js";
+} from "../terminal-menu.ts";
+import { Controller } from "./controller.ts";
 
 export class TerminalState {
   pendingColorLevel: ColorLevel | undefined;

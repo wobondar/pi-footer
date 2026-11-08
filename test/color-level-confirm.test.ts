@@ -5,7 +5,7 @@ import {
   COLOR_LEVEL_CONFIRM_HINT,
   COLOR_LEVEL_CONFIRM_WARNING,
   colorLevelConfirmValueLabel,
-} from "../src/ui/color-level-confirm.js";
+} from "../src/ui/color-level-confirm.ts";
 
 describe("color level confirmation", () => {
   it("formats warning and value labels", () => {

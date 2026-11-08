@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG, normalizeConfig } from "../../../src/config.js";
-import type { WidgetOptions } from "../../../src/types.js";
+import { DEFAULT_CONFIG, normalizeConfig } from "../../../src/config.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
 import {
   fieldValue,
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
   getTextField,
-} from "../../../src/ui/fields.js";
-import { ProviderWidget } from "../../../src/widgets/core/provider.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { WidgetStore } from "../../../src/widgets/store.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
+} from "../../../src/ui/fields.ts";
+import { ProviderWidget } from "../../../src/widgets/core/provider.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { WidgetStore } from "../../../src/widgets/store.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
 
 function provider(options: WidgetOptions = {}) {
   return registry.createWidget("provider", options);

@@ -1,6 +1,6 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import { WidgetStore } from "../../widgets/store.js";
+import { WidgetStore } from "../../widgets/store.ts";
 import {
   applyGlobalMenuAction,
   applyGlobalSettingsAction,
@@ -10,9 +10,9 @@ import {
   GLOBAL_MENU_HINT,
   globalMenuAction,
   globalMenuFields,
-} from "../global-menu.js";
-import { isPrintable, wrap } from "../helpers.js";
-import { Controller } from "./controller.js";
+} from "../global-menu.ts";
+import { isPrintable, wrap } from "../helpers.ts";
+import { Controller } from "./controller.ts";
 
 export class GlobalScreen extends Controller {
   private selected = 0;

@@ -1,9 +1,9 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import { registry, type WidgetDefinition } from "../../widgets/registry.js";
-import { clamp, isPrintable, wrap } from "../helpers.js";
-import { pageSelection } from "../navigation.js";
-import { Controller } from "./controller.js";
+import { registry, type WidgetDefinition } from "../../widgets/registry.ts";
+import { clamp, isPrintable, wrap } from "../helpers.ts";
+import { pageSelection } from "../navigation.ts";
+import { Controller } from "./controller.ts";
 
 export class AddWidgetScreen extends Controller {
   private selected = 0;

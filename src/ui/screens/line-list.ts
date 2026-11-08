@@ -1,14 +1,14 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import { registry } from "../../widgets/registry.js";
-import { wrap } from "../helpers.js";
-import { LINE_LIST_HINT, lineListCountLabel, lineListItemLabel } from "../line-list.js";
-import type { ScreenView } from "../model.js";
-import { pageSelection, scrollWindow } from "../navigation.js";
-import type { ScreenContext } from "../screen-context.js";
-import type { ScreenRender } from "../screen-render.js";
-import { addLineAfter, cloneLineAfter, deleteLine, moveLine } from "../widget-actions.js";
-import { Controller } from "./controller.js";
+import { registry } from "../../widgets/registry.ts";
+import { wrap } from "../helpers.ts";
+import { LINE_LIST_HINT, lineListCountLabel, lineListItemLabel } from "../line-list.ts";
+import type { ScreenView } from "../model.ts";
+import { pageSelection, scrollWindow } from "../navigation.ts";
+import type { ScreenContext } from "../screen-context.ts";
+import type { ScreenRender } from "../screen-render.ts";
+import { addLineAfter, cloneLineAfter, deleteLine, moveLine } from "../widget-actions.ts";
+import { Controller } from "./controller.ts";
 
 export class LineListScreen extends Controller {
   constructor(

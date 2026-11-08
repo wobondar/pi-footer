@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG } from "../../src/config.js";
-import { AddWidgetScreen } from "../../src/ui/screens/add-widget.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+import { DEFAULT_CONFIG } from "../../src/config.ts";
+import { AddWidgetScreen } from "../../src/ui/screens/add-widget.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("AddWidgetScreen", () => {
   it("filters and inserts widgets", () => {

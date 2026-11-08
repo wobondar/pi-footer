@@ -1,19 +1,19 @@
 import { describe, expect, it } from "vitest";
 
-import { normalizeConfig } from "../../../src/config.js";
-import type { SessionMetrics, WidgetOptions } from "../../../src/types.js";
+import { normalizeConfig } from "../../../src/config.ts";
+import type { SessionMetrics, WidgetOptions } from "../../../src/types.ts";
 import {
   fieldValue,
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
-} from "../../../src/ui/fields.js";
-import type { OptionField } from "../../../src/ui/model.js";
-import { applyOptionField } from "../../../src/ui/option-edit.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { CostWidget } from "../../../src/widgets/tokens/cost.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
+} from "../../../src/ui/fields.ts";
+import type { OptionField } from "../../../src/ui/model.ts";
+import { applyOptionField } from "../../../src/ui/option-edit.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { CostWidget } from "../../../src/widgets/tokens/cost.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
 
 const metrics: SessionMetrics = {
   inputTokens: 12_345,

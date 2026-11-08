@@ -1,6 +1,6 @@
 import { basename, sep } from "node:path";
 
-import { defineWidget } from "../types.js";
+import { defineWidget } from "../types.ts";
 
 const CWD_DISPLAY_STYLES = {
   default: {

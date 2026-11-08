@@ -1,12 +1,12 @@
-import { registry } from "../src/widgets/registry.js";
+import { registry } from "../src/widgets/registry.ts";
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG } from "../src/config.js";
-import { EMPTY_EXTENSION_STATUSES } from "../src/extension-statuses.js";
-import type { StatuslineConfig } from "../src/types.js";
-import { StatuslineConfigScreen } from "../src/ui.js";
-import { makeStatuslineData } from "./helpers/render.js";
-import { taggedPiTheme } from "./helpers/theme.js";
+import { DEFAULT_CONFIG } from "../src/config.ts";
+import { EMPTY_EXTENSION_STATUSES } from "../src/extension-statuses.ts";
+import type { StatuslineConfig } from "../src/types.ts";
+import { StatuslineConfigScreen } from "../src/ui.ts";
+import { makeStatuslineData } from "./helpers/render.ts";
+import { taggedPiTheme } from "./helpers/theme.ts";
 
 const data = makeStatuslineData();
 

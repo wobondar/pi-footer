@@ -1,6 +1,6 @@
-import { defineWidget } from "../types.js";
-import { contextColors, contextColorProperties, contextPercent } from "../utils/context.js";
-import { formatCount } from "../utils/token-format.js";
+import { defineWidget } from "../types.ts";
+import { contextColors, contextColorProperties, contextPercent } from "../utils/context.ts";
+import { formatCount } from "../utils/token-format.ts";
 
 export const ContextWidget = defineWidget({
   type: "context",

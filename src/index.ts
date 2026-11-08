@@ -13,18 +13,18 @@ import {
   loadConfig,
   saveConfig,
   STATUS_KEY,
-} from "./config.js";
-import { EventWidgetValues, UPDATE_EVENT_WIDGET_EVENT } from "./event-widgets.js";
+} from "./config.ts";
+import { EventWidgetValues, UPDATE_EVENT_WIDGET_EVENT } from "./event-widgets.ts";
 import {
   EMPTY_EXTENSION_STATUSES,
   visibleExtensionStatusRowEntries,
-} from "./extension-statuses.js";
-import { EMPTY_GIT_INFO, getGitInfo, hasEnabledGitWidgets, loadGitInfo } from "./git.js";
-import { collectSessionMetrics, collectTurnMetrics } from "./metrics.js";
-import { renderStatuslines } from "./render.js";
-import { isRecord, type GitInfo, type StatuslineConfig, type StatuslineData } from "./types.js";
-import { openStatuslineConfigUi } from "./ui.js";
-import { WidgetStore } from "./widgets/store.js";
+} from "./extension-statuses.ts";
+import { EMPTY_GIT_INFO, getGitInfo, hasEnabledGitWidgets, loadGitInfo } from "./git.ts";
+import { collectSessionMetrics, collectTurnMetrics } from "./metrics.ts";
+import { renderStatuslines } from "./render.ts";
+import { isRecord, type GitInfo, type StatuslineConfig, type StatuslineData } from "./types.ts";
+import { openStatuslineConfigUi } from "./ui.ts";
+import { WidgetStore } from "./widgets/store.ts";
 
 // Structural mirror of pi's footerData — collectStatuslineData only needs the branch getter.
 interface FooterDataLike {

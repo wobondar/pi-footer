@@ -1,8 +1,8 @@
 // Test-only adapter for config-shaped fixtures. Production rendering accepts WidgetStore.
-import type { StatuslineData } from "../../src/types.js";
-import { renderStatuslines, type RenderStatuslineOptions } from "../../src/render.js";
-import { WidgetStore } from "../../src/widgets/store.js";
-import type { StatuslineConfig } from "../../src/types.js";
+import type { StatuslineData } from "../../src/types.ts";
+import { renderStatuslines, type RenderStatuslineOptions } from "../../src/render.ts";
+import { WidgetStore } from "../../src/widgets/store.ts";
+import type { StatuslineConfig } from "../../src/types.ts";
 
 export function renderStatuslineForTest(
   config: StatuslineConfig,

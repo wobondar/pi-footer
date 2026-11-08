@@ -1,10 +1,10 @@
-import { defineWidget } from "../types.js";
-import { contextColorProperties, contextColors, contextPercent } from "../utils/context.js";
+import { defineWidget } from "../types.ts";
+import { contextColorProperties, contextColors, contextPercent } from "../utils/context.ts";
 import {
   formatTokenCount,
   tokenFormatStyleProperty,
   type TokenFormatStyle,
-} from "../utils/token-format.js";
+} from "../utils/token-format.ts";
 
 const CONTEXT_BAR_MODES = {
   default: {

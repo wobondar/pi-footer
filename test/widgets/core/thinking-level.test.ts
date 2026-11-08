@@ -1,21 +1,21 @@
 import { describe, expect, it } from "vitest";
 
-import { DEFAULT_CONFIG, normalizeConfig } from "../../../src/config.js";
-import { renderStatuslines } from "../../../src/render.js";
-import { makeStatuslineData } from "../../helpers/render.js";
-import type { WidgetOptions } from "../../../src/types.js";
+import { DEFAULT_CONFIG, normalizeConfig } from "../../../src/config.ts";
+import { renderStatuslines } from "../../../src/render.ts";
+import { makeStatuslineData } from "../../helpers/render.ts";
+import type { WidgetOptions } from "../../../src/types.ts";
 import {
   fieldValue,
   fieldsForWidget,
   formatWidgetColorOptions,
   formatWidgetOptions,
   getTextField,
-} from "../../../src/ui/fields.js";
-import { ThinkingLevelWidget } from "../../../src/widgets/core/thinking-level.js";
-import { WidgetInstance } from "../../../src/widgets/instance.js";
-import { registry } from "../../../src/widgets/registry.js";
-import { WidgetStore } from "../../../src/widgets/store.js";
-import type { WidgetContext } from "../../../src/widgets/types.js";
+} from "../../../src/ui/fields.ts";
+import { ThinkingLevelWidget } from "../../../src/widgets/core/thinking-level.ts";
+import { WidgetInstance } from "../../../src/widgets/instance.ts";
+import { registry } from "../../../src/widgets/registry.ts";
+import { WidgetStore } from "../../../src/widgets/store.ts";
+import type { WidgetContext } from "../../../src/widgets/types.ts";
 
 function thinkingLevel(options: WidgetOptions = {}) {
   return registry.createWidget("thinking-level", options);

@@ -1,15 +1,15 @@
 import { visibleWidth } from "@earendil-works/pi-tui";
 import { afterEach, describe, expect, it } from "vitest";
 
-import { configWithPreset, DEFAULT_CONFIG, normalizeConfig } from "../src/config.js";
-import { renderStatuslines as renderStatuslinesFromStore } from "../src/render.js";
-import type { StatuslineData, WidgetEntry } from "../src/types.js";
-import { asyncCache } from "../src/cache.js";
-import { registry, type WidgetType } from "../src/widgets/registry.js";
-import { WidgetStore } from "../src/widgets/store.js";
-import { formatCount, formatPiTokenCount } from "../src/widgets/utils/token-format.js";
-import { renderStatuslineForTest, renderStatuslinesForTest } from "./helpers/render.js";
-import { taggedPiTheme } from "./helpers/theme.js";
+import { configWithPreset, DEFAULT_CONFIG, normalizeConfig } from "../src/config.ts";
+import { renderStatuslines as renderStatuslinesFromStore } from "../src/render.ts";
+import type { StatuslineData, WidgetEntry } from "../src/types.ts";
+import { asyncCache } from "../src/cache.ts";
+import { registry, type WidgetType } from "../src/widgets/registry.ts";
+import { WidgetStore } from "../src/widgets/store.ts";
+import { formatCount, formatPiTokenCount } from "../src/widgets/utils/token-format.ts";
+import { renderStatuslineForTest, renderStatuslinesForTest } from "./helpers/render.ts";
+import { taggedPiTheme } from "./helpers/theme.ts";
 
 const plainConfig = {
   ...DEFAULT_CONFIG,

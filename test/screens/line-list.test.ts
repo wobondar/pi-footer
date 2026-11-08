@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { registry } from "../../src/widgets/registry.js";
+import { registry } from "../../src/widgets/registry.ts";
 
-import { DEFAULT_CONFIG } from "../../src/config.js";
-import { LineListScreen } from "../../src/ui/screens/line-list.js";
-import { key } from "../helpers/keys.js";
-import { createScreenHarness } from "../helpers/screen.js";
+import { DEFAULT_CONFIG } from "../../src/config.ts";
+import { LineListScreen } from "../../src/ui/screens/line-list.ts";
+import { key } from "../helpers/keys.ts";
+import { createScreenHarness } from "../helpers/screen.ts";
 
 describe("LineListScreen", () => {
   it("renders lines and mutates shared line selection", () => {

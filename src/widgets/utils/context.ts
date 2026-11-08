@@ -1,6 +1,6 @@
-import { normalizeColor, type ConditionalColorFields } from "../../colors.js";
-import type { WidgetOptions } from "../../types.js";
-import { colorPair } from "./colors.js";
+import { normalizeColor, type ConditionalColorFields } from "../../colors.ts";
+import type { WidgetOptions } from "../../types.ts";
+import { colorPair } from "./colors.ts";
 
 export function contextPercent(tokens: number | undefined, maxTokens: number | undefined) {
   if (tokens === undefined || maxTokens === undefined || maxTokens <= 0) return undefined;

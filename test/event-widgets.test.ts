@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { createHydratedWidgetForTest } from "./helpers/widgets.js";
-import { createEventWidgetId, EventWidgetValues } from "../src/event-widgets.js";
-import { eventWidgetUsageLines } from "../src/ui/events.js";
+import { createHydratedWidgetForTest } from "./helpers/widgets.ts";
+import { createEventWidgetId, EventWidgetValues } from "../src/event-widgets.ts";
+import { eventWidgetUsageLines } from "../src/ui/events.ts";
 
 describe("event widget UI", () => {
   it("renders usage lines", () => {

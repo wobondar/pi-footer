@@ -1,5 +1,5 @@
-import type { ColorName } from "../colors.js";
-import type { ScreenView } from "./model.js";
+import type { ColorName } from "../colors.ts";
+import type { ScreenView } from "./model.ts";
 
 export function escapeTarget(view: ScreenView): ScreenView | "close" {
   if (view === "main") return "close";

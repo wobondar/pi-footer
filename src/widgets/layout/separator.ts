@@ -1,5 +1,5 @@
-import { WIDGET_SEPARATOR_VALUES, widgetSeparatorText } from "../../separators.js";
-import { defineWidget } from "../types.js";
+import { WIDGET_SEPARATOR_VALUES, widgetSeparatorText } from "../../separators.ts";
+import { defineWidget } from "../types.ts";
 
 export const SeparatorWidget = defineWidget({
   type: "separator",

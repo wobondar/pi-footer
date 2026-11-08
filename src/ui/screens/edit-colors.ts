@@ -1,17 +1,17 @@
 import { Key, matchesKey } from "@earendil-works/pi-tui";
 
-import type { Widget } from "../../widgets/types.js";
+import type { Widget } from "../../widgets/types.ts";
 import {
   applyColorDigit,
   applyColorOptionField,
   deleteColorDigit,
   EDIT_COLORS_HINT,
-} from "../color-options.js";
-import { editColorsFieldRows, editColorsTitle } from "../edit-colors.js";
-import { colorFields } from "../fields.js";
-import { isPrintable, wrap } from "../helpers.js";
-import type { ColorOptionField } from "../model.js";
-import { Controller } from "./controller.js";
+} from "../color-options.ts";
+import { editColorsFieldRows, editColorsTitle } from "../edit-colors.ts";
+import { colorFields } from "../fields.ts";
+import { isPrintable, wrap } from "../helpers.ts";
+import type { ColorOptionField } from "../model.ts";
+import { Controller } from "./controller.ts";
 
 export class EditColorsScreen extends Controller {
   private selected = 0;

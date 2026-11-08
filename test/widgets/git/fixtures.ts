@@ -1,4 +1,4 @@
-import type { GitInfo } from "../../../src/types.js";
+import type { GitInfo } from "../../../src/types.ts";
 
 export const GIT_INFO: GitInfo = {
   branch: "main",

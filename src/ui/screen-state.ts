@@ -1,5 +1,5 @@
-import type { WidgetStore } from "../widgets/store.js";
-import type { ScreenView } from "./model.js";
+import type { WidgetStore } from "../widgets/store.ts";
+import type { ScreenView } from "./model.ts";
 
 export interface ScreenState {
   store: WidgetStore;
